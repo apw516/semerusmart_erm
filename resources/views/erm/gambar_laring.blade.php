@@ -1,8 +1,13 @@
 <input hidden type="text" id="imagestring">
 <div style="align-items: left; padding-top: 40px;">
     <p class="text-xl mb-3">Laring</p>
-    <img id="gambarnya" width="450px    " src="{{ asset('public/img/laring.jpg') }}" onclick="showMarkerArea(this);" />
+    @if($gbr != NULL )
+    <button class="btn btn-success mt-2" onclick="saveimage()">Update</button>
+    <img id="gambarnya" width="100%"   src="{{ $gbr }}" onclick="showMarkerArea(this);" />
+    @else
+    <img id="gambarnya" width="340px"   src="{{ asset('public/img/laring.jpg') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
+    @endif
 </div>
 <canvas hidden id="myCanvas" width="1240" height="1297" style="border:1px solid #d3d3d3;">
     Your browser does not support the HTML5 canvas tag.

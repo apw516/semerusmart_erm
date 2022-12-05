@@ -1093,7 +1093,11 @@ class ErmController extends Controller
         $id = $request->id;
         $kodekunjungan = $request->kodekunjungan;
         if ($id == 'lar') {
-            return view('erm.gambar_laring', []);
+            $gbr = DB::select('select laring from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
+            return view('erm.gambar_laring', [
+                'gbr' => $gbr[0]->laring,
+                'count' => count($gbr)
+            ]);
         } else if ($id == 'tkan') {
             $gbr = DB::select('select telingakanan from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_telingakanan', [
@@ -1107,11 +1111,23 @@ class ErmController extends Controller
                 'count' => count($gbr)
             ]);
         } else if ($id == 'far') {
-            return view('erm.gambar_faring', []);
+            $gbr = DB::select('select faring from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
+            return view('erm.gambar_faring', [
+                'gbr' => $gbr[0]->faring,
+                'count' => count($gbr)
+            ]);
         } else if ($id == 'maks') {
-            return view('erm.gambar_maks', []);
+            $gbr = DB::select('select maksilofasial from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
+            return view('erm.gambar_maks', [
+                'gbr' => $gbr[0]->maksilofasial,
+                'count' => count($gbr)
+            ]);
         } else if ($id == 'leh') {
-            return view('erm.gambar_leh', []);
+            $gbr = DB::select('select leherkepala from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
+            return view('erm.gambar_leh', [
+                'gbr' => $gbr[0]->leherkepala,
+                'count' => count($gbr)
+            ]);
         }
     }
 }
