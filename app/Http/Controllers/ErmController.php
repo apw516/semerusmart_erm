@@ -439,7 +439,7 @@ class ErmController extends Controller
         return view('erm.cppt', [
             'datakunjungan' => $datakunjungan,
             'pasien' => $datapasien,
-            'cppt' => DB::select('SELECT *,a.signature as signature_perawat,b.signature as signature_dokter,fc_nama_unit1(a.kode_unit) as namaunit FROM `erm_hasil_assesmen_keperawatan_rajal` a
+            'cppt' => DB::select('SELECT *,a.id as ida, a.signature as signature_perawat,b.signature as signature_dokter,fc_nama_unit1(a.kode_unit) as namaunit FROM `erm_hasil_assesmen_keperawatan_rajal` a
             LEFT OUTER JOIN `erm_hasil_assesmen_dokter_rajal` b ON a.`no_rm` = b.`no_rm`
             WHERE  a.no_rm = ?', [$rm])
             // 'orderpenunjang' =>  DB::select("SELECT a.id as id_header,b.id as id_detail,fc_nama_unit1(a.kode_unit) AS nama_unit_tujuan,d.`NAMA_TARIF`, b.jumlah_layanan FROM ts_layanan_header_order a LEFT OUTER JOIN ts_layanan_detail_order b ON a.`id` = b.`row_id_header` LEFT OUTER JOIN mt_tarif_detail c ON b.`kode_tarif_detail` = c.`KODE_TARIF_DETAIL` LEFT OUTER JOIN mt_tarif_header d ON c.`KODE_TARIF_HEADER` = d.`KODE_TARIF_HEADER` WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
@@ -461,11 +461,20 @@ class ErmController extends Controller
         echo 'ok';
     }
     public function penandaangambar(Request $request)
-
     {
-        return view('erm.gambar', [
-            'kodekunjungan' => $request->kodekunjungan,
-        ]);
+        if (auth()->user()->unit == 1014) {
+            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+            return view('erm.gambarmata', [
+                'gbr' => $gbr,
+                'kodekunjungan' => $request->kodekunjungan,
+            ]);
+        } else if (auth()->user()->unit == 1019) {
+            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+            return view('erm.gambartht', [
+                'gbr' => $gbr,
+                'kodekunjungan' => $request->kodekunjungan,
+            ]);
+        }
     }
     public function terapitindakan(Request $request)
     {
@@ -868,6 +877,10 @@ class ErmController extends Controller
         $datakunjungan = DB::select('select *,fc_nama_unit1(kode_unit) as nama_unit,fc_nama_penjamin2(kode_penjamin) AS nama_penjamin from ts_kunjungan where kode_kunjungan = ?', [$request->kodekunjungan]);
         $rm = $datakunjungan[0]->no_rm;
         $datapasien = DB::select('select nama_px,no_rm,tempat_lahir,date(tgl_lahir) as tgl_lahir,jenis_kelamin,fc_umur(no_rm) as umur, fc_alamat4(no_rm) as alamat  from mt_pasien where no_rm = ?', [$rm]);
+        //ambil gambar berdasarkan unit login
+        $gambar = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ?', [$request->kodekunjungan]);
+
+
         if (auth()->user()->hak_akses == 2) {
             return view('erm.resume_perawat', [
                 'now' => carbon::now()->timezone('Asia/jakarta'),
@@ -881,7 +894,8 @@ class ErmController extends Controller
             RIGHT OUTER JOIN ts_layanan_detail c ON b.id = c.row_id_header
             RIGHT OUTER JOIN mt_tarif_detail d ON c.kode_tarif_detail = d.`KODE_TARIF_DETAIL`
             RIGHT OUTER JOIN mt_tarif_header e ON d.`KODE_TARIF_HEADER` = e.`KODE_TARIF_HEADER`
-            WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan])
+            WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
+                'gambar' => $gambar
             ]);
         } else {
             return view('erm.resume', [
@@ -896,7 +910,9 @@ class ErmController extends Controller
             RIGHT OUTER JOIN ts_layanan_detail c ON b.id = c.row_id_header
             RIGHT OUTER JOIN mt_tarif_detail d ON c.kode_tarif_detail = d.`KODE_TARIF_DETAIL`
             RIGHT OUTER JOIN mt_tarif_header e ON d.`KODE_TARIF_HEADER` = e.`KODE_TARIF_HEADER`
-            WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan])
+            WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
+                'gambar' => $gambar
+
             ]);
         }
     }
@@ -1092,42 +1108,66 @@ class ErmController extends Controller
     {
         $id = $request->id;
         $kodekunjungan = $request->kodekunjungan;
+        $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$kodekunjungan]);
         if ($id == 'lar') {
-            $gbr = DB::select('select laring from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_laring', [
-                'gbr' => $gbr[0]->laring,
-                'count' => count($gbr)
+                'gbr' => $gbr
             ]);
         } else if ($id == 'tkan') {
-            $gbr = DB::select('select telingakanan from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_telingakanan', [
-                'gbr' => $gbr[0]->telingakanan,
-                'count' => count($gbr)
+                'gbr' => $gbr,
             ]);
         } else if ($id == 'tkir') {
-            $gbr = DB::select('select telingakiri from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_telingakiri', [
-                'gbr' => $gbr[0]->telingakiri,
-                'count' => count($gbr)
+                'gbr' => $gbr,
             ]);
         } else if ($id == 'far') {
-            $gbr = DB::select('select faring from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_faring', [
-                'gbr' => $gbr[0]->faring,
-                'count' => count($gbr)
+                'gbr' => $gbr,
             ]);
         } else if ($id == 'maks') {
-            $gbr = DB::select('select maksilofasial from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_maks', [
-                'gbr' => $gbr[0]->maksilofasial,
-                'count' => count($gbr)
+                'gbr' => $gbr,
             ]);
         } else if ($id == 'leh') {
-            $gbr = DB::select('select leherkepala from erm_tanda_gambar_tht where kodekunjungan = ? ',[$kodekunjungan]);
             return view('erm.gambar_leh', [
-                'gbr' => $gbr[0]->leherkepala,
-                'count' => count($gbr)
+                'gbr' => $gbr
             ]);
         }
+    }
+    public function hapusgambar(Request $request)
+    {
+        if ($request->kode == 'telingakanan') {
+            $data = [
+                'telingakanan' => (NULL)
+            ];
+        }
+        if ($request->kode == 'telingakiri') {
+            $data = [
+                'telingakiri' => (NULL)
+            ];
+        }
+        if ($request->kode == 'faring') {
+            $data = [
+                'faring' => (NULL)
+            ];
+        }
+        if ($request->kode == 'laring') {
+            $data = [
+                'laring' => (NULL)
+            ];
+        }
+        if ($request->kode == 'maksilofasial') {
+            $data = [
+                'maksilofasial' => (NULL)
+            ];
+        }
+        if ($request->kode == 'leherkepala') {
+            $data = [
+                'leherkepala' => (NULL)
+            ];
+        }
+        gambartht::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        echo json_encode('ok');
     }
 }

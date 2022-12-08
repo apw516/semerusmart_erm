@@ -356,6 +356,35 @@
         });
     });
 
+    function reloadgbr()
+    {
+        spinner = $('#loader2');
+        spinner.show();
+        var element = document.getElementById("penandaangambar");
+        myFunction(element)
+        element.classList.add("active");
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kodekunjungan: $('#kodekunjungan').val()
+            },
+            url: '<?= route('penandaangambar') ?>',
+            error: function(data) {
+                spinner.hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                spinner.hide();
+                $('#content').html(response)
+            }
+        });
+    }
     function myFunction(e) {
         var elems = document.querySelectorAll(".active");
         [].forEach.call(elems, function(el) {

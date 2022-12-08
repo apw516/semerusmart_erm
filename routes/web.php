@@ -58,6 +58,7 @@ Route::group(['middleware' => ['hak_akses:3','auth']], function () {
     Route::post('/simpansignature', [ErmController::class, 'simpansignature'])->name('simpansignature');
     Route::post('/ambilgambar', [ErmController::class, 'ambilgambar'])->name('ambilgambar');
     Route::post('/simpangambar', [ErmController::class, 'simpangambar'])->name('simpangambar');
+    Route::post('/hapusgambar', [ErmController::class, 'hapusgambar'])->name('hapusgambar');
 });
 
 

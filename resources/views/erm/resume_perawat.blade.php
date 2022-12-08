@@ -337,6 +337,13 @@
                         @endforeach
                     </tbody>
                 </table>
+                <table>
+                    <tr>
+                        <td>
+                        <p>Telinga Kanan</p>    
+                        <img src="{{ $gambar[0]->telingakanan }}" alt=""></td>
+                    </tr>
+                </table>
                 <table class="table text-bold table-md text-md mt-4">
                     <thead class="bg-info">
                         <th class="text-center">Tanggal Assesmen Dokter</th>

@@ -30,10 +30,10 @@
         </tbody>
     </table>
     @foreach($cppt as $c)
-    <button class="btn btn-warning" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">{{ $c->tanggalkunjungan }} | {{ $c->namaunit }}</button>
+    <button class="btn btn-warning" type="button" data-toggle="collapse" data-target=".multi-collapse{{ $c->ida }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">{{ $c->tanggalkunjungan }} | {{ $c->namaunit }} | {{ $c->ida }}</button>
     <div class="row mt-4">
         <div class="col">
-            <div class="collapse multi-collapse" id="multiCollapseExample1">
+            <div class="collapse multi-collapse{{ $c->ida }}" id="multiCollapseExample1">
                 <div class="card card-body">
                     <table class="table table-sm">
                         <thead>
@@ -128,7 +128,7 @@
             </div>
         </div>
         <div class="col">
-            <div class="collapse multi-collapse" id="multiCollapseExample2">
+            <div class="collapse multi-collapse{{ $c->ida }}" id="multiCollapseExample2">
                 <div class="card card-body">
                     <table class="table table-sm">
                         <thead>

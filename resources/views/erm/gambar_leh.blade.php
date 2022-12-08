@@ -1,15 +1,23 @@
 <input hidden type="text" id="imagestring">
 <div style="align-items: left; padding-top: 40px;">
     <p class="text-xl mb-3">Leher dan Kepala</p>
-    @if($gbr != NULL )
+    @if(count($gbr) > 0)
+    @if($gbr[0]->leherkepala != NULL )
     <button class="btn btn-success mt-2" onclick="saveimage()">Update</button>
-    <img id="gambarnya" width="100%"   src="{{ $gbr }}" onclick="showMarkerArea(this);" />
+    <button class="btn btn-danger mt-2 hapusgambar" gambar="leherkepala" onclick="hapustanda()">Hapus</button>
+    <button class="btn btn-info mt-2" onclick="reloadgbr()">Batal</button>
+
+    <img id="gambarnya" width="20%"   src="{{ $gbr[0]->leherkepala }}" onclick="showMarkerArea(this);" />
     @else
-    <img id="gambarnya" width="340px"   src="{{ asset('public/img/leherdankepala.jpg') }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="340px"   src="{{ asset('public/img/leherdankepala.png') }}" onclick="showMarkerArea(this);" />
+    <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
+    @endif
+    @else
+    <img id="gambarnya" width="340px"   src="{{ asset('public/img/leherdankepala.png') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
     @endif
 </div>
-<canvas hidden id="myCanvas" width="1240" height="1297" style="border:1px solid #d3d3d3;">
+<canvas hidden id="myCanvas" width="340" height="450" style="border:1px solid #d3d3d3;">
     Your browser does not support the HTML5 canvas tag.
 </canvas>
 
@@ -53,7 +61,55 @@
                     text: 'Gambar sudah disimpan !',
                     footer: ''
                 })
+                reloadgbr()
             }
         });
     }
+</script>
+<script>
+    $('.hapusgambar').click(function() {
+        kodekunjungan = $('#kodekunjungan').val()
+        kode = $(this).attr('gambar')
+        Swal.fire({
+            title: 'Gambar dihapus ?',
+            text: "Gambar yang ditandai akan dihapus ...",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya, Hapus !'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    async: true,
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        kode,
+                        kodekunjungan
+                    },
+                    url: '<?= route('hapusgambar') ?>',
+                    error: function(data) {
+                        spinner.hide()
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Ooops....',
+                            text: 'Sepertinya ada masalah......',
+                            footer: ''
+                        })
+                    },
+                    success: function(data) {
+                        spinner.hide()
+                        Swal.fire(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                        reloadgbr()
+                    }
+                });
+            }
+        })
+    })
 </script>
