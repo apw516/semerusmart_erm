@@ -30,10 +30,10 @@
         </tbody>
     </table>
     @foreach($cppt as $c)
-    <button class="btn btn-warning" type="button" data-toggle="collapse" data-target=".multi-collapse{{ $c->ida }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">{{ $c->tanggalkunjungan }} | {{ $c->namaunit }} | {{ $c->ida }}</button>
+    <button class="btn btn-warning" type="button" data-toggle="collapse" data-target=".multi-collapse{{ $c->id_asskep }}" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">{{ $c->tanggalkunjungan }} | {{ $c->namaunit }} </button>
     <div class="row mt-4">
         <div class="col">
-            <div class="collapse multi-collapse{{ $c->ida }}" id="multiCollapseExample1">
+            <div class="collapse multi-collapse{{ $c->id_asskep }}" id="multiCollapseExample1">
                 <div class="card card-body">
                     <table class="table table-sm">
                         <thead>
@@ -119,7 +119,7 @@
                             <tr>
                                 <td class="text-bold">Pemeriksa</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->namapemeriksa }}
-                                    <img src="{{$c->signature_perawat}}" alt="">
+                                    <img src="{{$c->signature}}" alt="">
                                 </td>
                             </tr>
                         </tbody>
@@ -128,7 +128,7 @@
             </div>
         </div>
         <div class="col">
-            <div class="collapse multi-collapse{{ $c->ida }}" id="multiCollapseExample2">
+            <div class="collapse multi-collapse{{ $c->id_asskep }}" id="multiCollapseExample2">
                 <div class="card card-body">
                     <table class="table table-sm">
                         <thead>
@@ -199,7 +199,7 @@
                             <tr>
                                 <td class="text-bold">Pemeriksa</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->namadokter }}
-                                    <img src="{{ $c->signature_dokter }}" alt="">
+                                    <img src="{{ $c->signature_DOKTER }}" alt="">
                                 </td>
                             </tr>
                             <tr>
@@ -208,6 +208,7 @@
                                         <button type="button" class="btn btn-info">Penunjang</button>
                                         <button type="button" class="btn btn-warning">Tindakan</button>
                                         <button type="button" class="btn btn-danger">Farmasi</button>
+                                        <button type="button" class="btn btn-success text-center tombolgambar" data-toggle="modal" kode="{{ $c->kode_kunjungan }}" data-target="#modalgambar">Penandaan Gambar</button>
                                     </div>
                                 </td>
                             </tr>
@@ -281,4 +282,28 @@
         </tbody>
     </table> -->
     @endforeach
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalgambar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Hasil Penandaan Gambar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="view_gambar">
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>

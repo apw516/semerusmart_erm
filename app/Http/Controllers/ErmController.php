@@ -439,8 +439,39 @@ class ErmController extends Controller
         return view('erm.cppt', [
             'datakunjungan' => $datakunjungan,
             'pasien' => $datapasien,
-            'cppt' => DB::select('SELECT *,a.id as ida, a.signature as signature_perawat,b.signature as signature_dokter,fc_nama_unit1(a.kode_unit) as namaunit FROM `erm_hasil_assesmen_keperawatan_rajal` a
-            LEFT OUTER JOIN `erm_hasil_assesmen_dokter_rajal` b ON a.`no_rm` = b.`no_rm`
+            'cppt' => DB::select('SELECT DISTINCT 
+            A.*
+            ,id_asskep
+            ,B.kode_unit
+            ,B.kode_kunjungan
+            ,B.no_rm
+            ,B.rencanakerja
+            ,tanggal_periksa
+            ,keluhan_utama
+            ,riwayat_penyakit
+            ,hipertensi
+            ,kencingmanis
+            ,jantung
+            ,stroke
+            ,hepatitis
+            ,asthma
+            ,ginjal
+            ,tbparu
+            ,riwayatlain
+            ,keadaanumum
+            ,kesadaran
+            ,diagnosakerja
+            ,tindaklanjut
+            ,hasilpenunjang
+            ,tanggalassesmen
+            ,namadokter
+            ,iddokter
+            ,B.signature AS signature_DOKTER
+            ,B.status
+            ,gambar            
+             ,fc_nama_unit1(a.kode_unit) AS namaunit 
+            FROM `erm_hasil_assesmen_keperawatan_rajal` a
+            LEFT OUTER JOIN `erm_hasil_assesmen_dokter_rajal` b ON B.id_asskep = A.ID 
             WHERE  a.no_rm = ?', [$rm])
             // 'orderpenunjang' =>  DB::select("SELECT a.id as id_header,b.id as id_detail,fc_nama_unit1(a.kode_unit) AS nama_unit_tujuan,d.`NAMA_TARIF`, b.jumlah_layanan FROM ts_layanan_header_order a LEFT OUTER JOIN ts_layanan_detail_order b ON a.`id` = b.`row_id_header` LEFT OUTER JOIN mt_tarif_detail c ON b.`kode_tarif_detail` = c.`KODE_TARIF_DETAIL` LEFT OUTER JOIN mt_tarif_header d ON c.`KODE_TARIF_HEADER` = d.`KODE_TARIF_HEADER` WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
             // 'tindakan' => DB::connection('mysql2')->select("SELECT a.kode_kunjungan,b.id AS id_header,C.id AS id_detail,c.jumlah_layanan,b.kode_layanan_header,c.`kode_tarif_detail`,e.`NAMA_TARIF` FROM simrs_waled.ts_kunjungan a 

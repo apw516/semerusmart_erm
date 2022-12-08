@@ -337,13 +337,46 @@
                         @endforeach
                     </tbody>
                 </table>
-                <table>
-                    <tr>
-                        <td>
-                        <p>Telinga Kanan</p>    
-                        <img src="{{ $gambar[0]->telingakanan }}" alt=""></td>
-                    </tr>
-                </table>
+                @if(count($gambar) > 0)
+               <div class="row">
+                @if($gambar[0]->telingakanan != NULL)
+                <div class="col-md-2">
+                    <p>Telinga Kanan</p>
+                    <img src="{{ $gambar[0]->telingakanan }}" alt="">
+                </div>
+                @endif
+                @if($gambar[0]->telingakiri != NULL)
+                <div class="col-md-2">
+                    <p>Telinga Kiri</p>
+                    <img src="{{ $gambar[0]->telingakiri }}" alt="">
+                </div>
+                @endif
+                @if($gambar[0]->faring != NULL)
+                <div class="col-md-2">
+                    <p>Faring</p>
+                    <img src="{{ $gambar[0]->faring }}" alt="">
+                </div>
+                @endif              
+                @if($gambar[0]->laring != NULL)
+                <div class="col-md-2">
+                    <p>Laring</p>
+                    <img src="{{ $gambar[0]->laring }}" alt="">
+                </div>
+                @endif
+                @if($gambar[0]->leherkepala != NULL)
+                <div class="col-md-2">
+                    <p>Leher dan Kepala</p>
+                    <img src="{{ $gambar[0]->leherkepala }}" alt="">
+                </div>
+                @endif                
+                @if($gambar[0]->maksilofasial != NULL)
+                <div class="col-md-2">
+                    <p>Maksilofasial</p>
+                    <img src="{{ $gambar[0]->maksilofasial }}" alt="">
+                </div>
+                @endif
+               </div>
+               @endif
                 <table class="table text-bold table-md text-md mt-4">
                     <thead class="bg-info">
                         <th class="text-center">Tanggal Assesmen Dokter</th>
@@ -357,8 +390,8 @@
                             </td>
 
                             <td>
-                                <input readonly style="border:none;background:white" type="text" class="form-control text-center" value="{{ strtoupper(auth()->user()->name) }}" name="namapemeriksa" id="namapemeriksa">
-                                <input hidden type="text" class="form-control" value="{{ strtoupper(auth()->user()->id) }}" id="idpemeriksa" name="idpemeriksa">
+                                <input readonly style="border:none;background:white" type="text" class="form-control text-center" value="{{ strtoupper($assmed[0]->namadokter) }}" name="namapemeriksa" id="namapemeriksa">
+                                <input hidden type="text" class="form-control" value="{{ strtoupper($assmed[0]->namadokter) }}" id="idpemeriksa" name="idpemeriksa">
                             </td>
                             <td>
                                 <img src="{{ $assmed[0]->signature}}" alt="">
