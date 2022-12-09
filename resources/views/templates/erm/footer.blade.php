@@ -53,7 +53,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('detailpasien') ?>',
@@ -81,7 +81,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('formperawat') ?>',
@@ -109,7 +109,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('formdokter') ?>',
@@ -137,7 +137,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('riwayatpengobatan') ?>',
@@ -165,7 +165,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('penandaangambar') ?>',
@@ -193,7 +193,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('terapitindakan') ?>',
@@ -221,7 +221,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('orderpenunjang') ?>',
@@ -249,7 +249,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('tindaklanjut') ?>',
@@ -277,7 +277,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('resumemedis') ?>',
@@ -306,7 +306,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val(),
                 nomorrm: $('#nomorrm').val(),
             },
@@ -335,7 +335,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val(),
                 nomorrm: $('#nomorrm').val(),
             },
@@ -366,7 +366,7 @@
         $.ajax({
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('penandaangambar') ?>',
@@ -401,7 +401,7 @@
             dataType: 'json',
             type: 'post',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan: $('#kodekunjungan').val()
             },
             url: '<?= route('cekresume') ?>',

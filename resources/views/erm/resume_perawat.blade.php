@@ -429,7 +429,7 @@
             type: 'post',
             dataType: 'json',
             data: {
-                _token: "{{ csrf_token() }}",
+                "_token" : "{{ csrf_token() }}",
                 kodekunjungan,
                 tglassesmen,
                 namapemeriksa,
