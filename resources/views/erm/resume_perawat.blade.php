@@ -66,11 +66,11 @@
                         <table class="table table-sm table-striped">
                             <tr>
                                 <td class="text-bold">Riwayat Psikologis</td>
-                                <td style="font-style:italic">{{ $asskep[0]->Riwayatpsikologi }}</td>
+                                <td style="font-style:italic">{{ $asskep[0]->Riwayatpsikologi }} | {{ $asskep[0]->keterangan_riwayat_psikolog }}</td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Penggunaan Alat Bantu</td>
-                                <td style="font-style:italic">{{ $asskep[0]->penggunaanalatbantu }}</td>
+                                <td style="font-style:italic">{{ $asskep[0]->penggunaanalatbantu }} | {{ $asskep[0]->keterangan_alat_bantu }}</td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Cacat Tubuh</td>
@@ -186,7 +186,7 @@
                     <tbody>
                         <tr class="text-center">
                             <td>
-                                <input style="border:none" type="text" class="form-control" name="tanggalassemen" value="{{ $now }}">
+                                <input style="border:none" type="text" class="form-control" name="tanggalassemenperawat" id="tanggalassemenperawat" value="{{ $now }}">
                             </td>
                             <td>
                                 <input  style="border:none;background-color:white" readonly type="text" class="form-control text-center" value="{{ strtoupper(auth()->user()->name) }}" name="namapemeriksa">
@@ -420,7 +420,7 @@
         }
         document.getElementById("signature").value = dataUrl;
         kodekunjungan = $('#kodekunjungan').val()
-        tglassesmen = $('#tanggalassemen').val()
+        tglassesmen = $('#tanggalassemenperawat').val()
         namapemeriksa = $('#namapemeriksa').val()
         idpemeriksa = $('#idpemeriksa').val()
         signature = $('#signature').val()

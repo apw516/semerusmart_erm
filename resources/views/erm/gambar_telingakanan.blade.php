@@ -61,6 +61,7 @@
                     footer: ''
                 })
                 reloadgbr()
+                cek_resume()
             }
         });
     }

@@ -13,6 +13,9 @@ use App\Models\mt_kode_header;
 use App\Models\erm_order_header;
 use App\Models\erm_order_detail;
 use App\Models\gambartht;
+use App\Models\gambarmata;
+use App\Models\gambarparu;
+use App\Models\gambargigi;
 use App\Models\assemenawalmedis;
 
 class ErmController extends Controller
@@ -188,6 +191,99 @@ class ErmController extends Controller
             $value =  $nama['value'];
             $dataSet[$index] = $value;
         }
+        //validasiform
+        if ($dataSet['tekanandarah'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'tekanan darah pasien belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['frekuensinadi'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'Frekuensi nadi pasien belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['frekuensinapas'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'Frekuensi Napas pasien belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['suhutubuh'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'Suhu tubuh pasien belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['Riwayatpsikologi'] == 'LAINNYA' && $dataSet['keterangan_rp'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'Keterangan riwayat psikologi belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['penggunaanalatbantu'] == 'Lainnya' && $dataSet['keterangan_ab'] == '') {
+            $data = [
+                'kode' => 500,
+                'message' => 'Keterangan pemakaian alat bantu belum diisi ...'
+            ];
+            echo json_encode($data);
+            die;
+        }
+        if ($dataSet['cacattubuh'] == 'Ya') {
+            if ($dataSet['keterangancacattubuh'] == 'Tidak Ada' || $dataSet['keterangancacattubuh'] == '') {
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Isi Keterangan cacat tubuh ...'
+                ];
+                echo json_encode($data);
+                die;
+            }
+        }
+        if ($dataSet['cacattubuh'] == 'Ya') {
+            if ($dataSet['keterangancacattubuh'] == 'Tidak Ada' || $dataSet['keterangancacattubuh'] == '') {
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Isi Keterangan cacat tubuh ...'
+                ];
+                echo json_encode($data);
+                die;
+            }
+        }
+        if ($dataSet['Keluhannyeri'] == 'Ya') {
+            if ($dataSet['skalenyeripasien'] == '') {
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Isi skala nyeri pasien ...'
+                ];
+                echo json_encode($data);
+                die;
+            }
+        }
+
+
+        //endof validasi
+        if ($dataSet['Riwayatpsikologi'] == 'LAINNYA') {
+            $keterangan_riwayat_psikologis = $dataSet['keterangan_rp'];
+        } else {
+            $keterangan_riwayat_psikologis = '';
+        }
+
+        if ($dataSet['penggunaanalatbantu'] == 'Lainnya') {
+            $keterangan_alat_bantu = $dataSet['keterangan_ab'];
+        } else {
+            $keterangan_alat_bantu = '';
+        }
         $data = [
             'counter' => $dataSet['counter'],
             'no_rm' => $dataSet['nomorrm'],
@@ -202,7 +298,9 @@ class ErmController extends Controller
             'frekuensinapas' => $dataSet['frekuensinapas'],
             'suhutubuh' => $dataSet['suhutubuh'],
             'Riwayatpsikologi' => $dataSet['Riwayatpsikologi'],
+            'keterangan_riwayat_psikolog' => $keterangan_riwayat_psikologis,
             'penggunaanalatbantu' => $dataSet['penggunaanalatbantu'],
+            'keterangan_alat_bantu' => $keterangan_alat_bantu,
             'cacattubuh' => $dataSet['cacattubuh'],
             'keterangancacattubuh' => $dataSet['keterangancacattubuh'],
             'Keluhannyeri' => $dataSet['Keluhannyeri'],
@@ -244,7 +342,9 @@ class ErmController extends Controller
                     'frekuensinapas' => $dataSet['frekuensinapas'],
                     'suhutubuh' => $dataSet['suhutubuh'],
                     'Riwayatpsikologi' => $dataSet['Riwayatpsikologi'],
+                    'keterangan_riwayat_psikolog' => $keterangan_riwayat_psikologis,
                     'penggunaanalatbantu' => $dataSet['penggunaanalatbantu'],
+                    'keterangan_alat_bantu' => $keterangan_alat_bantu,
                     'cacattubuh' => $dataSet['cacattubuh'],
                     'keterangancacattubuh' => $dataSet['keterangancacattubuh'],
                     'Keluhannyeri' => $dataSet['Keluhannyeri'],
@@ -349,6 +449,14 @@ class ErmController extends Controller
             $riwayatlain = (NULL);
         } else {
             $riwayatlain = $dataSet['riwayatlain'];
+            if ($dataSet['ketriwayatlain'] == '') {
+                $data = [
+                    'kode' => 500,
+                    'message' => 'Isi keterangan riwayat lain ...'
+                ];
+                echo json_encode($data);
+                die;
+            }
         };
 
         $data = [
@@ -358,6 +466,8 @@ class ErmController extends Controller
             'no_rm' => $request->rm,
             'tanggal_periksa' => $dataSet['tgljampemeriksaan'],
             'keluhan_utama' => $dataSet['keluhanutama'],
+            'riwayat_kehamilan' => $dataSet['riwayatkehamilan'],
+            'riwayat_kelahiran' => $dataSet['riwayatkelahiran'],
             'riwayat_penyakit' => $dataSet['riwayatpenyakitsekarang'],
             'hipertensi' => $hipertensi,
             'kencingmanis' => $kencingmanis,
@@ -368,10 +478,17 @@ class ErmController extends Controller
             'ginjal' => $ginjal,
             'tbparu' => $tb,
             'riwayatlain' => $riwayatlain,
+            'ket_riwayat_lain' => $dataSet['ketriwayatlain'],
+            'alergi' => $dataSet['alergi'],
+            'ket_alergi' => $dataSet['ketalergi'],
+            'status_generalis' => $dataSet['statusgeneralis'],
             'keadaanumum' => $dataSet['keadaanumum'],
             'kesadaran' => $dataSet['kesadaran'],
             'diagnosakerja' => $dataSet['diagnosakerja'],
+            'diagnosapembanding' => $dataSet['diagnosapembanding'],
             'rencanakerja' => $dataSet['rencanakerja'],
+            'namadokter' => $dataSet['namapemeriksa'],
+            'iddokter' => $dataSet['idpemeriksa'],
             'signature' => '',
             'status' => 2
         ];
@@ -399,13 +516,27 @@ class ErmController extends Controller
                     'kesadaran' => $dataSet['kesadaran'],
                     'diagnosakerja' => $dataSet['diagnosakerja'],
                     'rencanakerja' => $dataSet['rencanakerja'],
+                    'namadokter' => $dataSet['namapemeriksa'],
+                    'iddokter' => $dataSet['idpemeriksa'],
                     'signature' => '',
-                    'status' => 2
+                    'status' => 2,
+                    'riwayat_kehamilan' => $dataSet['riwayatkehamilan'],
+                    'riwayat_kelahiran' => $dataSet['riwayatkelahiran'],
+                    'ket_riwayat_lain' => $dataSet['ketriwayatlain'],
+                    'alergi' => $dataSet['alergi'],
+                    'ket_alergi' => $dataSet['ketalergi'],
+                    'status_generalis' => $dataSet['statusgeneralis'],
+                    'diagnosapembanding' => $dataSet['diagnosapembanding']
                 ];
                 assesmenawal_dokter::whereRaw('no_rm = ? and kode_unit = ? and kode_kunjungan = ?', array($request->rm,  auth()->user()->unit, $request->kodekunjungan))->update($data);
             } else {
                 $erm_assesmen = assesmenawal_dokter::create($data);
             }
+            $data = [
+                'status' => 2,
+                'signature' => ''
+            ];
+            assesmenawal_dokter::whereRaw('kode_kunjungan = ?', array($request->kodekunjungan))->update($data);
             $data = [
                 'kode' => 200,
                 'message' => 'Data berhasil disimpan !'
@@ -442,8 +573,8 @@ class ErmController extends Controller
             'cppt' => DB::select('SELECT DISTINCT 
             A.*
             ,id_asskep
-            ,B.kode_unit
-            ,B.kode_kunjungan
+            ,B.kode_unit as kode_unitnya
+            ,B.kode_kunjungan as kode_kunjungannya
             ,B.no_rm
             ,B.rencanakerja
             ,tanggal_periksa
@@ -468,6 +599,7 @@ class ErmController extends Controller
             ,iddokter
             ,B.signature AS signature_DOKTER
             ,B.status
+            ,B.tanggalassesmen as assdok
             ,gambar            
              ,fc_nama_unit1(a.kode_unit) AS namaunit 
             FROM `erm_hasil_assesmen_keperawatan_rajal` a
@@ -494,7 +626,7 @@ class ErmController extends Controller
     public function penandaangambar(Request $request)
     {
         if (auth()->user()->unit == 1014) {
-            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+            $gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$request->kodekunjungan]);
             return view('erm.gambarmata', [
                 'gbr' => $gbr,
                 'kodekunjungan' => $request->kodekunjungan,
@@ -505,6 +637,26 @@ class ErmController extends Controller
                 'gbr' => $gbr,
                 'kodekunjungan' => $request->kodekunjungan,
             ]);
+        } else if (auth()->user()->unit == 1012) {
+            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+            return view('erm.gambarkandungan', [
+                'gbr' => $gbr,
+                'kodekunjungan' => $request->kodekunjungan,
+            ]);
+        } else if (auth()->user()->unit == 1024) {
+            $gbr = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ? ', [$request->kodekunjungan]);
+            return view('erm.gambarparu', [
+                'gbr' => $gbr,
+                'kodekunjungan' => $request->kodekunjungan,
+            ]);
+        } else if (auth()->user()->unit == 1007) {
+            $gbr = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ? ', [$request->kodekunjungan]);
+            return view('erm.gambargigi', [
+                'gbr' => $gbr,
+                'kodekunjungan' => $request->kodekunjungan,
+            ]);
+        }else{
+            echo "<h5 class='mt-3 text-danger'>Tidak ada form pemeriksaan khusus ...</h5>";
         }
     }
     public function terapitindakan(Request $request)
@@ -732,17 +884,24 @@ class ErmController extends Controller
                 'tgl_header' => date('Y-m-d')
             ];
             $header = mt_kode_header::create($save_header);
+            if ($penjamin == 'P01') {
+                $status_layanan = '1';
+            } else {
+                $status_layanan = '2';
+            }
             $data_layanan_header = [
                 'kode_layanan_header' => $id_header,
+                'no_rm' => $request->no_rm,
                 'tgl_entry' => $now,
                 'kode_kunjungan' => $kodekunjungan,
-                'status_layanan' => 3,
+                'status_layanan' => $status_layanan,
                 'kode_unit' => $request->kodepenunjang,
                 'kode_tipe_transaksi' => 2,
                 'kode_penjaminx' => $penjamin,
                 'dok_kirim' => auth()->user()->kode_dpjp,
                 'unit_pengirim' => auth()->user()->unit,
                 'pic' => auth()->user()->kode_dpjp,
+                'status_order' => 0
             ];
             $hed = erm_order_header::create($data_layanan_header);
             foreach ($arrayindex as $arr) {
@@ -986,8 +1145,8 @@ class ErmController extends Controller
         $signature = $request->signature;
         $data = [
             'tanggalassesmen' => $tglassesmen,
-            'namadokter' => $namapemeriksa,
-            'iddokter' => $idpemeriksa,
+            // 'namadokter' => $namapemeriksa,
+            // 'iddokter' => $idpemeriksa,
             'signature' => $signature,
             'status' => 1
         ];
@@ -1006,7 +1165,16 @@ class ErmController extends Controller
         $id = $request->id;
 
         //jika poli tht
-        $cek_gbr = DB::select('select id from erm_tanda_gambar_tht where kodekunjungan = ?', [$kodekunjungan]);
+        if (auth()->user()->unit == '1019') {
+            $cek_gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1014') {
+            $cek_gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1024') {
+            $cek_gbr = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1007') {
+            $cek_gbr = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ? ', [$kodekunjungan]);
+        }
+
         if (count($cek_gbr) == 0) {
             if ($id == 'telingakanan') {
                 $data = [
@@ -1044,7 +1212,33 @@ class ErmController extends Controller
                     'maksilofasial' => $img,
                 ];
             }
-            $gambartht = gambartht::create($data);
+            if ($id == 'bolamata') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'bolamata' => $img,
+                ];
+            }
+            if ($id == 'paruparu') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'paruparu' => $img,
+                ];
+            }
+            if ($id == 'gigi') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'gigi' => $img,
+                ];
+            }
+            if (auth()->user()->unit == '1019') {
+                $gambartht = gambartht::create($data);
+            } else if (auth()->user()->unit == '1014') {
+                $gambarmata = gambarmata::create($data);
+            } else if (auth()->user()->unit == '1024') {
+                $gambarparu = gambarparu::create($data);
+            } else if (auth()->user()->unit == '1007') {
+                $gambargigi = gambargigi::create($data);
+            }
         } else {
             if ($id == 'telingakanan') {
                 $data = [
@@ -1082,9 +1276,39 @@ class ErmController extends Controller
                     'maksilofasial' => $img,
                 ];
             }
-
-            gambartht::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+            if ($id == 'bolamata') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'bolamata' => $img,
+                ];
+            }
+            if ($id == 'paruparu') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'paruparu' => $img,
+                ];
+            }
+            if ($id == 'gigi') {
+                $data = [
+                    'kodekunjungan' => $kodekunjungan,
+                    'gigi' => $img,
+                ];
+            }
+            if (auth()->user()->unit == '1019') {
+                gambartht::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+            } else if (auth()->user()->unit == '1014') {
+                gambarmata::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+            } else if (auth()->user()->unit == '1014') {
+                gambarparu::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+            } else if (auth()->user()->unit == '1007') {
+                gambargigi::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+            }
         }
+        $data = [
+            'status' => 2,
+            'signature' => ''
+        ];
+        assesmenawal_dokter::whereRaw('kode_kunjungan = ?', array($kodekunjungan))->update($data);
         $data = [
             'kode' => 200,
             'message' => 'Assemen awal medis sudah disimpan !'
@@ -1101,8 +1325,8 @@ class ErmController extends Controller
         $signature = $request->signature;
         $data = [
             'tanggalassemen' => $tglassesmen,
-            'namapemeriksa' => $namapemeriksa,
-            'idpemeriksa' => $idpemeriksa,
+            // 'namapemeriksa' => $namapemeriksa,
+            // 'idpemeriksa' => $idpemeriksa,
             'signature' => $signature,
             'status' => 1
         ];
@@ -1139,7 +1363,17 @@ class ErmController extends Controller
     {
         $id = $request->id;
         $kodekunjungan = $request->kodekunjungan;
-        $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$kodekunjungan]);
+        if (auth()->user()->unit == '1019') {
+            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1014') {
+            $gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1012') {
+            $gbr = DB::select('select * from erm_tanda_gambar_kandungan where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1024') {
+            $gbr = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ? ', [$kodekunjungan]);
+        } else if (auth()->user()->unit == '1007') {
+            $gbr = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ? ', [$kodekunjungan]);
+        }
         if ($id == 'lar') {
             return view('erm.gambar_laring', [
                 'gbr' => $gbr
@@ -1162,6 +1396,18 @@ class ErmController extends Controller
             ]);
         } else if ($id == 'leh') {
             return view('erm.gambar_leh', [
+                'gbr' => $gbr
+            ]);
+        } else if ($id == 'mata') {
+            return view('erm.bolamata', [
+                'gbr' => $gbr
+            ]);
+        } else if ($id == 'paru') {
+            return view('erm.paruparu', [
+                'gbr' => $gbr
+            ]);
+        } else if ($id == 'gigi') {
+            return view('erm.gigi', [
                 'gbr' => $gbr
             ]);
         }
@@ -1198,7 +1444,39 @@ class ErmController extends Controller
                 'leherkepala' => (NULL)
             ];
         }
-        gambartht::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        if ($request->kode == 'bolamata') {
+            $data = [
+                'bolamata' => (NULL)
+            ];
+        }
+        if ($request->kode == 'paruparu') {
+            $data = [
+                'paruparu' => (NULL)
+            ];
+        }
+        if ($request->kode == 'gigi') {
+            $data = [
+                'gigi' => (NULL)
+            ];
+        }
+        if (auth()->user()->unit == '1019') {
+            gambartht::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        } else if (auth()->user()->unit == '1014') {
+            gambarmata::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        } else if (auth()->user()->unit == '1007') {
+            gambargigi::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        } else if (auth()->user()->unit == '1024') {
+            gambarparu::whereRaw('kodekunjungan = ?', array($request->kodekunjungan))->update($data);
+        }
         echo json_encode('ok');
+    }
+    public function ambilgambar_cppt(Request $request)
+    {
+        if ($request->kodeunit == '1019') {
+            $gambar = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ?', [$request->kode]);
+            return view('erm.garmbarcppt', [
+                'gbr' => $gambar
+            ]);
+        }
     }
 }

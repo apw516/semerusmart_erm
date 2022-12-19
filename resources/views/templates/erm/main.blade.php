@@ -47,6 +47,7 @@
                 </div>
                 <div class="info">
                     <a href="#" class="d-block">{{ $pasien[0]->nama_px }} <br>
+                    <input hidden type="text" id="rmdaripasien" value="{{ $pasien[0]->no_rm }}">
                         <p class="text-xs">
                             {{ $datakunjungan[0]->nama_penjamin }}
                         </p>
@@ -94,7 +95,7 @@
                     <li class="nav-item">
                         <a id="penandaangambar" class="nav-link penandaangambar">
                             <i class="nav-icon fas bi bi-images"></i>
-                            <p>Penandaan Gambar</p>
+                            <p>Pemeriksaan Khusus</p>
                         </a>
                     </li>
                     <li class="nav-item">

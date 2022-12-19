@@ -46,7 +46,9 @@
                             </tr>
                         </table>
                         @else
-                        Tidak ada hasil pemeriksaan ...
+                        <h5 class="text-danger">
+                            Tidak ada hasil pemeriksaan / Data Erm belum tersedia ... !
+                        </h5>
                         @endif
                     </div>
                 </div>
@@ -63,7 +65,9 @@
         </div>
         <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
             <div class="card-body">
-                And lastly, the placeholder content for the third and final accordion panel. This panel is hidden by default.
+                <h5 class="text-danger">
+                    Oops sorry ! Hasil pemeriksaan penunjang masih dalam tahap pengembangan ...
+                </h5>
             </div>
         </div>
     </div>

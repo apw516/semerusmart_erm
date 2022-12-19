@@ -1,19 +1,19 @@
 <input hidden type="text" id="imagestring">
 <div style="align-items: left; padding-top: 40px;">
-    <p class="text-xl mb-3">Maksilofasial</p>
+    <p class="text-xl mb-3">Penandaan gambar</p> 
     @if(count($gbr) > 0)
-    @if($gbr[0]->maksilofasial != NULL )
+    @if($gbr[0]->paruparu != NULL )
     <button class="btn btn-success mt-2" onclick="saveimage()">Update</button>
-    <button class="btn btn-danger mt-2 hapusgambar" gambar="maksilofasial" onclick="hapustanda()">Hapus</button>
+    <button class="btn btn-danger mt-2 hapusgambar" gambar="paruparu" onclick="hapustanda()">Hapus</button>
     <button class="btn btn-info mt-2" onclick="reloadgbr()">Batal</button>
 
-    <img id="gambarnya" width="20%"   src="{{ $gbr[0]->maksilofasial }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="340px"   src="{{ $gbr[0]->paruparu }}" onclick="showMarkerArea(this);" />
     @else
-    <img id="gambarnya" width="340px"   src="{{ asset('public/img/maksilofasial.png') }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="340px"   src="{{ asset('public/img/poliparu.png') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
     @endif
     @else
-    <img id="gambarnya" width="340px"   src="{{ asset('public/img/maksilofasial.png') }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="340px"   src="{{ asset('public/img/poliparu.png') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
     @endif
 </div>
@@ -32,7 +32,7 @@
         $('#imagestring').val(dataUrl)
         img = $('#imagestring').val()
         kodekunjungan = $('#kodekunjungan').val()
-        id= 'maksilofasial'
+        id = 'paruparu'
         $.ajax({
             async: true,
             type: 'post',

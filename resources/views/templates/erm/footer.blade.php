@@ -1,7 +1,7 @@
 <!-- jQuery -->
 <script src="{{ asset('public/dist/js/jquery-3.js') }}"></script>
 <script src="{{ asset('public/dist/js/jquery-ui.min.js') }}"></script>
-<script src="{{ asset('public/semeru/plugins/jquery/jquery.min.js') }}"></script>
+<!-- <script src="{{ asset('public/semeru/plugins/jquery/jquery.min.js') }}"></script> -->
 <!-- Bootstrap -->
 <script src="{{ asset('public/semeru/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <!-- overlayScrollbars -->

@@ -1,26 +1,25 @@
 <input hidden type="text" id="imagestring">
 <div style="align-items: left; padding-top: 40px;">
-    <p class="text-xl mb-3">Maksilofasial</p>
+    <p class="text-xl mb-3">Posisi dan Pergerakan Bola Mata</p> 
     @if(count($gbr) > 0)
-    @if($gbr[0]->maksilofasial != NULL )
+    @if($gbr[0]->bolamata != NULL )
     <button class="btn btn-success mt-2" onclick="saveimage()">Update</button>
-    <button class="btn btn-danger mt-2 hapusgambar" gambar="maksilofasial" onclick="hapustanda()">Hapus</button>
+    <button class="btn btn-danger mt-2 hapusgambar" gambar="bolamata" onclick="hapustanda()">Hapus</button>
     <button class="btn btn-info mt-2" onclick="reloadgbr()">Batal</button>
 
-    <img id="gambarnya" width="20%"   src="{{ $gbr[0]->maksilofasial }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="500px"   src="{{ $gbr[0]->bolamata }}" onclick="showMarkerArea(this);" />
     @else
-    <img id="gambarnya" width="340px"   src="{{ asset('public/img/maksilofasial.png') }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="500px"   src="{{ asset('public/img/bolamata.png') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
     @endif
     @else
-    <img id="gambarnya" width="340px"   src="{{ asset('public/img/maksilofasial.png') }}" onclick="showMarkerArea(this);" />
+    <img id="gambarnya" width="500px"   src="{{ asset('public/img/bolamata.png') }}" onclick="showMarkerArea(this);" />
     <button class="btn btn-success mt-2" onclick="saveimage()">Simpan</button>
     @endif
 </div>
-<canvas hidden id="myCanvas" width="340" height="450" style="border:1px solid #d3d3d3;">
+<canvas hidden id="myCanvas" width="500px" height="450px" style="border:1px solid #d3d3d3;">
     Your browser does not support the HTML5 canvas tag.
 </canvas>
-
 <script>
     function saveimage() {
         var canvas = document.getElementById("myCanvas");
@@ -32,7 +31,7 @@
         $('#imagestring').val(dataUrl)
         img = $('#imagestring').val()
         kodekunjungan = $('#kodekunjungan').val()
-        id= 'maksilofasial'
+        id = 'bolamata'
         $.ajax({
             async: true,
             type: 'post',

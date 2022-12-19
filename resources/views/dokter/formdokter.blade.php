@@ -111,14 +111,22 @@
                             </tr>
                             <tr>
                                 <td>Keluhan Utama</td>
-                                <td colspan="3"><textarea cols="10" rows="4" class="form-control" name="keluhanutama" id="keluhanutama"></textarea></td>
+                                <td colspan="3"><textarea cols="10" rows="4" class="form-control" name="keluhanutama" id="keluhanutama">{{ $asskep[0]->keluhanutama }}</textarea></td>
                             </tr>
                             <tr>
                                 <td colspan="4" class="bg-secondary">Riwayat Kesehatan</td>
                             </tr>
                             <tr>
+                                <td>Riwayat Kehamilan (bagi pasien wanita) </td>
+                                <td colspan="3"><textarea name="riwayatkehamilan" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
+                            </tr>
+                            <tr>
+                                <td>Riwayat Kelahiran (bagi pasien anak) </td>
+                                <td colspan="3"><textarea name="riwayatkelahiran" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
+                            </tr>
+                            <tr>
                                 <td>Riwayat Penyakit Sekarang</td>
-                                <td colspan="3"><textarea name="riwayatpenyakitsekarang" cols="10" rows="4" class="form-control"></textarea></td>
+                                <td colspan="3"><textarea name="riwayatpenyakitsekarang" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
                             </tr>
                             <tr>
                                 <td>Riwayat Penyakit Dahulu</td>
@@ -178,6 +186,31 @@
                                                 <label class="form-check-label" for="exampleCheck1">Lain-lain</label>
                                             </div>
                                         </div>
+                                        <textarea name="ketriwayatlain" id="ketriwayatlain" class="form-control" placeholder="keterangan lain - lain"></textarea>
+                                </td>                               
+                            </tr>
+                            <tr>
+                                <td>Riwayat Alergi</td>
+                                <td colspan="3">
+                                    <div class="row">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input ml-2 mr-3" type="radio" name="alergi" id="alergi" value="Tidak Ada" checked>
+                                            <label class="form-check-label" for="inlineRadio1">Tidak Ada</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input mr-3" type="radio" name="alergi" id="alergi" value="Ada">
+                                            <label class="form-check-label" for="inlineRadio2">Ada</label>
+                                            <div class="form-group form-check">
+                                                <input class="form-control" id="ketalergi" name="ketalergi" placeholder="keterangan alergi ...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Status Generalis</td>
+                                <td>
+                                    <input type="text" class="form-control" name="statusgeneralis" id="statusgeneralis">
                                 </td>
                             </tr>
                             <tr>
@@ -202,29 +235,34 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>Diagnosa Pembanding</td>
+                                <td colspan="3">
+                                    <textarea class="form-control" name="diagnosapembanding"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>Rencana Kerja</td>
                                 <td colspan="3">
                                     <textarea class="form-control" name="rencanakerja"></textarea>
                                 </td>
                             </tr>
                         </table>
-                        <!-- <table class="table text-bold table-md text-md mt-4">
+                        <table hidden class="table text-bold table-md text-md mt-4">
                             <thead class="bg-info">
-                                <th class="text-center">Tanggal Assesmen Dokter</th>
+                                <!-- <th class="text-center">Tanggal Assesmen Dokter</th> -->
                                 <th class="text-center">Nama Dokter</th>
-                                <th>Tanda Tangan Dokter</th>
+                                <!-- <th>Tanda Tangan Dokter</th> -->
                             </thead>
                             <tbody>
                                 <tr class="text-center">
-                                    <td>
+                                    <!-- <td>
                                         <input type="text" class="form-control" name="tanggalassemen" value="{{ $now }}">
-                                    </td>
-
+                                    </td> -->
                                     <td>
                                         <input readonly type="text" class="form-control text-center" value="{{ strtoupper(auth()->user()->name) }}" name="namapemeriksa">
                                         <input hidden type="text" class="form-control" value="{{ strtoupper(auth()->user()->id) }}" id="idpemeriksa" name="idpemeriksa">
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         <div id="signature-pad">
                                             <div style="border:solid 1px teal; width:360px;height:110px;padding:3px;position:relative;">
                                                 <div id="note" onmouseover="my_function();">tulis tanda tangan didalam box ...
@@ -237,10 +275,10 @@
                                                     Clear</button>
                                             </div>
                                         </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </tbody>
-                        </table> -->
+                        </table>
                         <div class="col-md-12 justify-content-end mb-2">
                             <button type="button" class="btn btn-secondary float-right mr-2" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-success float-right mr-2 simpanhasildokter mb-3">Simpan</button>
@@ -349,6 +387,7 @@
                                 text: data.message,
                                 footer: ''
                             })
+                            cek_resume()
                         }
                     }
                 });

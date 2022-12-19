@@ -62,11 +62,11 @@
                             </tr>
                             <tr>
                                 <td class="text-bold">Riwayat Psikologis</td>
-                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->Riwayatpsikologi }}</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->Riwayatpsikologi }} | {{ $c->keterangan_riwayat_psikolog }}</td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Penggunaan Alat Bantu</td>
-                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->penggunaanalatbantu }}</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->penggunaanalatbantu }} | {{ $c->keterangan_alat_bantu }} </td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Cacat Tubuh</td>
@@ -120,6 +120,16 @@
                                 <td class="text-bold">Pemeriksa</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->namapemeriksa }}
                                     <img src="{{$c->signature}}" alt="">
+                                    @if($c->signature == '')
+                                    <h3 class="text-danger">
+                                        Belum ditanda tangan !
+                                    </h3>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Tanggal assesmen</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->tanggalassemen }}
                                 </td>
                             </tr>
                         </tbody>
@@ -166,7 +176,7 @@
                                 <td style="font-style:italic" class="text-md">@if($c->asthma != 1 ) Tidak Ada @else Ya @endif</td>
                                 <td style="font-style:italic" class="text-md">@if($c->tbparu != 1 ) Tidak Ada @else Ya @endif</td>
                                 <td style="font-style:italic" class="text-md">@if($c->ginjal != 1 )
-                                Tidak Ada @else Ya @endif</td>
+                                    Tidak Ada @else Ya @endif</td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Riwayat Penyakit Lain</td>
@@ -188,13 +198,18 @@
                                 <td class="text-bold">Tindak Lanjut</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->tindaklanjut }}</td>
                             </tr>
-                            <tr>
+                            <!-- <tr>
                                 <td class="text-bold">Hasil Pemeriksaan Penunjang</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->hasilpenunjang }}</td>
-                            </tr>
+                            </tr> -->
                             <tr>
                                 <td class="text-bold">Rencana Kerja</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->rencanakerja }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Tanggal assesmen</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->assdok }}
+                                </td>
                             </tr>
                             <tr>
                                 <td class="text-bold">Pemeriksa</td>
@@ -208,7 +223,7 @@
                                         <button type="button" class="btn btn-info">Penunjang</button>
                                         <button type="button" class="btn btn-warning">Tindakan</button>
                                         <button type="button" class="btn btn-danger">Farmasi</button>
-                                        <button type="button" class="btn btn-success text-center tombolgambar" data-toggle="modal" kode="{{ $c->kode_kunjungan }}" data-target="#modalgambar">Penandaan Gambar</button>
+                                        <button type="button" class="btn btn-success text-center tombolgambar" data-toggle="modal" kode="{{ $c->kode_kunjungan }}" data-target="#modalgambar" kodeunit="{{ $c->kode_unit }}" kodekunjungan="{{ $c->kode_kunjungan }}">Penandaan Gambar </button>
                                     </div>
                                 </td>
                             </tr>
@@ -287,23 +302,51 @@
 
 <!-- Modal -->
 <div class="modal fade" id="modalgambar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Hasil Penandaan Gambar</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="view_gambar">
-
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hasil Penandaan Gambar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body gambarcppt">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
     </div>
-  </div>
 </div>
+<script>
+    $('.tombolgambar').click(function() {
+        spinner = $('#loader2');
+        spinner.show();
+        kode = $(this).attr('kodekunjungan')
+        kodeunit = $(this).attr('kodeunit')
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode,
+                kodeunit
+            },
+            url: '<?= route('ambilgambar_cppt') ?>',
+            error: function(data) {
+                spinner.hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                spinner.hide();
+                $('.gambarcppt').html(response)
+            }
+        });
+    })
+</script>

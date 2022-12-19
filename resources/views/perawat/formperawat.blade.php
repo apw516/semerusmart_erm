@@ -116,6 +116,10 @@
                                     <td>Riwayat Psikologis</td>
                                     <td colspan="4">
                                         <div class="form-check form-check-inline">
+                                            <input class="form-check-input ml-2 mr-3" type="radio" name="Riwayatpsikologi" id="Riwayatpsikologi" value="Tidak Ada" checked>
+                                            <label class="form-check-label" for="inlineRadio1">Tidak Ada</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
                                             <input class="form-check-input ml-2 mr-3" type="radio" name="Riwayatpsikologi" id="Riwayatpsikologi" value="CEMAS">
                                             <label class="form-check-label" for="inlineRadio1">Cemas</label>
                                         </div>
@@ -128,9 +132,12 @@
                                             <label class="form-check-label" for="inlineRadio1">Sedih</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input mr-3" type="radio" name="Riwayatpsikologi" id="Riwayatpsikologi" value="LAINNYA" checked>
+                                            <input class="form-check-input mr-3" type="radio" name="Riwayatpsikologi" id="Riwayatpsikologi" value="LAINNYA">
                                             <label class="form-check-label" for="inlineRadio2">Lain -
                                                 lain</label>
+                                        </div>
+                                        <div>
+                                            <textarea type="text" name="keterangan_rp" id="keterangan_rp" class="form-control mt-2" placeholder="keterangan...">Tidak Ada</textarea>
                                         </div>
                                     </td>
                                 </tr>
@@ -151,6 +158,13 @@
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input ml-2 mr-3" type="radio" name="penggunaanalatbantu" id="penggunaanalatbantu" value="Kursi Roda">
                                             <label class="form-check-label" for="inlineRadio1">Kursi Roda</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input ml-2 mr-3" type="radio" name="penggunaanalatbantu" id="penggunaanalatbantu" value="Lainnya">
+                                            <label class="form-check-label" for="inlineRadio1">Lain - lain</label>
+                                        </div>
+                                        <div>
+                                            <textarea type="text" name="keterangan_ab" id="keterangan_ab" class="form-control mt-2" placeholder="keterangan...">Tidak Ada</textarea>
                                         </div>
                                     </td>
                                 </tr>
@@ -449,23 +463,23 @@
                                     </td>
                                 </tr>
                             </table>
-                            <!-- <table class="table text-bold table-md text-md">
+                            <table hidden class="table text-bold table-md text-md">
                                 <thead>
-                                    <th class="text-center">Tanggal Assesmen Perawat/Bidan</th>
+                                    <!-- <th class="text-center">Tanggal Assesmen Perawat/Bidan</th> -->
                                     <th class="text-center">Nama Perawat/Bidan</th>
-                                    <th>Tanda Tangan Perawat/Bidan</th>
+                                    <!-- <th>Tanda Tangan Perawat/Bidan</th> -->
                                 </thead>
                                 <tbody>
                                     <tr class="text-center">
                                         <td>
-                                            <input type="text" class="form-control" name="tanggalassemen" value="{{ $now }}">
+                                            <!-- <input type="text" class="form-control" name="tanggalassemen" value="{{ $now }}"> -->
                                         </td>
 
                                         <td>
                                             <input readonly type="text" class="form-control text-center" value="{{ strtoupper(auth()->user()->name) }}" name="namapemeriksa">
                                             <input hidden type="text" class="form-control" value="{{ strtoupper(auth()->user()->id) }}" name="idpemeriksa">
                                         </td>
-                                        <td>
+                                        <!-- <td>
                                             <div id="signature-pad">
                                                 <div style="border:solid 1px teal; width:360px;height:110px;padding:3px;position:relative;">
                                                     <div id="note" onmouseover="my_function();">tulis tanda tangan didalam box ...
@@ -478,10 +492,10 @@
                                                         Clear</button>
                                                 </div>
                                             </div>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 </tbody>
-                            </table> -->
+                            </table>
                             <div class="col-md-12 justify-content-end mb-2">
                                 <button type="button" class="btn btn-secondary float-right mr-2" data-dismiss="modal">Close</button>
                                 <button type="button" class="btn btn-success float-right mr-2 simpanhasil mb-3">Simpan</button>

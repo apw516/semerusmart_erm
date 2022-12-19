@@ -71,6 +71,7 @@
         var data = $('.formtindakan').serializeArray();
         var kodekunjungan = $('#kodekunjungan').val()
         kodepenunjang = $('#namapenunjang').val()
+        no_rm = $('#rmdaripasien').val()
         $.ajax({
             async: true,
             type: 'post',
@@ -79,7 +80,8 @@
                 _token: "{{ csrf_token() }}",
                 data: JSON.stringify(data),
                 kodekunjungan: kodekunjungan,
-                kodepenunjang: $('#namapenunjang').val()
+                kodepenunjang: $('#namapenunjang').val(),
+                no_rm
             },
             url: '<?= route('simpanorder') ?>',
             error: function(data) {

@@ -106,6 +106,7 @@
                             'success'
                         )
                         reloadgbr()
+                        cek_resume()
                     }
                 });
             }
