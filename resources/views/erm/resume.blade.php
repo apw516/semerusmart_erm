@@ -319,45 +319,191 @@
                     </div>
                 </div>
                 @if(count($gambar) > 0)
-               <div class="row">
-                @if($gambar[0]->telingakanan != NULL)
-                <div class="col-md-2">
-                    <p>Telinga Kanan</p>
-                    <img src="{{ $gambar[0]->telingakanan }}" alt="">
+                @if(auth()->user()->unit == '1019')
+                <div class="row">
+                    @if($gambar[0]->telingakanan != NULL)
+                    <div class="col-md-2">
+                        <p>Telinga Kanan</p>
+                        <img src="{{ $gambar[0]->telingakanan }}" alt="">
+                    </div>
+                    @endif
+                    @if($gambar[0]->telingakiri != NULL)
+                    <div class="col-md-2">
+                        <p>Telinga Kiri</p>
+                        <img src="{{ $gambar[0]->telingakiri }}" alt="">
+                    </div>
+                    @endif
+                    @if($gambar[0]->faring != NULL)
+                    <div class="col-md-2">
+                        <p>Faring</p>
+                        <img src="{{ $gambar[0]->faring }}" alt="">
+                    </div>
+                    @endif
+                    @if($gambar[0]->laring != NULL)
+                    <div class="col-md-2">
+                        <p>Laring</p>
+                        <img src="{{ $gambar[0]->laring }}" alt="">
+                    </div>
+                    @endif
+                    @if($gambar[0]->leherkepala != NULL)
+                    <div class="col-md-2">
+                        <p>Leher dan Kepala</p>
+                        <img src="{{ $gambar[0]->leherkepala }}" alt="">
+                    </div>
+                    @endif
+                    @if($gambar[0]->maksilofasial != NULL)
+                    <div class="col-md-2">
+                        <p>Maksilofasial</p>
+                        <img src="{{ $gambar[0]->maksilofasial }}" alt="">
+                    </div>
+                    @endif
                 </div>
+                @elseif(auth()->user()->unit == '1024')
+                <table class="table table-sm table-bordered">
+                    <tr>
+                        <td colspan="2" class="bg-warning">Hasil Pemeriksaan Khusus</td>
+                    </tr>
+                    <tr>
+                        <td>Gambar</td>
+                        <td><img src="{{ $gambar[0]->paruparu }}" alt=""></td>
+                    </tr>
+                    <tr>
+                        <td>Inspeksi</td>
+                        <td>{{ strtoupper($gambar[0]->Inspeksi) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Keterangan Inspeksi</td>
+                        <td>{{ strtoupper($gambar[0]->keteranganinspeksi) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sela Iga</td>
+                        <td>{{ strtoupper($gambar[0]->selaiga) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Vocalfremitus</td>
+                        <td>{{ strtoupper($gambar[0]->vocalfremitus) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sonar</td>
+                        <td>{{ strtoupper($gambar[0]->sonar) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hipersonar</td>
+                        <td>{{ strtoupper($gambar[0]->hipersonar) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Vesikuler</td>
+                        <td>{{ strtoupper($gambar[0]->vesikuler) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Ronchi</td>
+                        <td>{{ strtoupper($gambar[0]->ronchi) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Wheezing</td>
+                        <td>{{ strtoupper($gambar[0]->wheezing) }}</td>
+                    </tr>
+                </table>
+                @elseif(auth()->user()->unit == '1014')
+                <table class="table table-sm table-bordered">
+                    <tr>
+                        <td colspan="2" class="bg-warning text-bold">Hasil Pemeriksaan Khusus</td>
+                    </tr>
+                    <tr>
+                        <td class="text-bold">Gambar</td>
+                        <td><img src="{{ $gambar[0]->bolamata }}" alt=""></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="bg-warning">VISUS DASAR</td>
+                    </tr>
+                    <tr style="font-style:italic">
+                        <td>OD : {{ strtoupper($gambar[0]->od_visus_dasar) }}</td>
+                        <td>PINHOLE : {{ strtoupper($gambar[0]->od_pinhole_visus_dasar) }}</td>
+                    </tr>
+                    <tr style="font-style:italic">
+                        <td>OS : {{ strtoupper($gambar[0]->os_visus_dasar) }}</td>
+                        <td>PINHOLE : {{ strtoupper($gambar[0]->os_pinhole_visus_dasar) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="bg-warning">Refraktometer /streak</td>
+                    </tr>
+                    <tr style="font-style:italic">
+                        <td>OD : Sph : {{ strtoupper($gambar[0]->od_sph_refraktometer) }} Cyl : {{ strtoupper($gambar[0]->od_cyl_refraktometer) }} x : {{ strtoupper($gambar[0]->od_x_refraktometer) }}</td>
+                        <td>OS : Sph : {{ strtoupper($gambar[0]->os_sph_refraktometer) }} Cyl : {{ strtoupper($gambar[0]->os_cyl_refraktometer) }} x : {{ strtoupper($gambar[0]->os_x_refraktometer) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="bg-warning">Lensometer</td>
+                    </tr>
+                    <tr style="font-style:italic">
+                        <td>OD : Sph : {{ strtoupper($gambar[0]->od_sph_Lensometer) }} Cyl : {{ strtoupper($gambar[0]->od_cyl_Lensometer) }} x : {{ strtoupper($gambar[0]->od_x_Lensometer) }}</td>
+                        <td>OS : Sph : {{ strtoupper($gambar[0]->os_sph_Lensometer) }} Cyl : {{ strtoupper($gambar[0]->os_cyl_Lensometer) }} x : {{ strtoupper($gambar[0]->os_x_Lensometer) }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="bg-warning">Koreksi Penglihatan Jauh</td>
+                    </tr>
+                    <tr style="font-style:italic">
+                        <td>VOD : Sph : {{ strtoupper($gambar[0]->vod_sph_kpj) }} Cyl : {{ strtoupper($gambar[0]->vod_cyl_kpj) }} x : {{ strtoupper($gambar[0]->vod_x_kpj) }}</td>
+                        <td>VOS : Sph : {{ strtoupper($gambar[0]->vos_sph_kpj) }} Cyl : {{ strtoupper($gambar[0]->vos_cyl_kpj) }} x : {{ strtoupper($gambar[0]->vos_x_kpj) }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tajam Penglihatan Dekat</td>
+                        <td style="font-style:italic">{{ $gambar[0]->penglihatan_dekat}}</td>
+                    </tr>
+                    <tr>
+                        <td>Tekanan Intra Okular</td>
+                        <td style="font-style:italic">{{ $gambar[0]->tekanan_intra_okular}}</td>
+                    </tr>
+                    <tr>
+                        <td>Catatan Pemeriksaan Lainnya</td>
+                        <td style="font-style:italic">{{ $gambar[0]->catatan_pemeriksaan_lainnya}}</td>
+                    </tr>
+                    <tr>
+                        <td>Palpebra</td>
+                        <td style="font-style:italic">{{ $gambar[0]->palpebra}}</td>
+                    </tr>
+                    <tr>
+                        <td>Konjungtiva</td>
+                        <td style="font-style:italic">{{ $gambar[0]->konjungtiva}}</td>
+                    </tr>
+                    <tr>
+                        <td>Kornea</td>
+                        <td style="font-style:italic">{{ $gambar[0]->kornea}}</td>
+                    </tr>
+                    <tr>
+                        <td>Bilik Mata Depan</td>
+                        <td style="font-style:italic">{{ $gambar[0]->bilik_mata_depan}}</td>
+                    </tr>
+                    <tr>
+                        <td>Pupil</td>
+                        <td style="font-style:italic">{{ $gambar[0]->pupil}}</td>
+                    </tr>
+                    <tr>
+                        <td>Iris</td>
+                        <td style="font-style:italic">{{ $gambar[0]->iris}}</td>
+                    </tr>
+                    <tr>
+                        <td>Lensa</td>
+                        <td style="font-style:italic">{{ $gambar[0]->lensa}}</td>
+                    </tr>
+                    <tr>
+                        <td>Funduskopi</td>
+                        <td style="font-style:italic">{{ $gambar[0]->funduskopi}}</td>
+                    </tr>
+                    <tr>
+                        <td>Oftamologis</td>
+                        <td style="font-style:italic">{{ $gambar[0]->oftamologis}}</td>
+                    </tr>
+                    <tr>
+                        <td>Masalah Medis</td>
+                        <td style="font-style:italic">{{ $gambar[0]->masalahmedis}}</td>
+                    </tr>
+                    <tr>
+                        <td>Prognosis</td>
+                        <td style="font-style:italic">{{ $gambar[0]->prognosis}}</td>
+                    </tr>
+                </table>
                 @endif
-                @if($gambar[0]->telingakiri != NULL)
-                <div class="col-md-2">
-                    <p>Telinga Kiri</p>
-                    <img src="{{ $gambar[0]->telingakiri }}" alt="">
-                </div>
                 @endif
-                @if($gambar[0]->faring != NULL)
-                <div class="col-md-2">
-                    <p>Faring</p>
-                    <img src="{{ $gambar[0]->faring }}" alt="">
-                </div>
-                @endif              
-                @if($gambar[0]->laring != NULL)
-                <div class="col-md-2">
-                    <p>Laring</p>
-                    <img src="{{ $gambar[0]->laring }}" alt="">
-                </div>
-                @endif
-                @if($gambar[0]->leherkepala != NULL)
-                <div class="col-md-2">
-                    <p>Leher dan Kepala</p>
-                    <img src="{{ $gambar[0]->leherkepala }}" alt="">
-                </div>
-                @endif                
-                @if($gambar[0]->maksilofasial != NULL)
-                <div class="col-md-2">
-                    <p>Maksilofasial</p>
-                    <img src="{{ $gambar[0]->maksilofasial }}" alt="">
-                </div>
-                @endif
-               </div>
-               @endif
                 </table>
                 <table class="table text-bold table-md text-md mt-4">
                     <thead class="bg-info">

@@ -625,6 +625,8 @@ class ErmController extends Controller
     }
     public function penandaangambar(Request $request)
     {
+        $cek_awal_medis = DB::select('select * from erm_hasil_assesmen_dokter_rajal where kode_kunjungan = ?',[$request->kodekunjungan]);
+        if(count($cek_awal_medis) > 0){
         if (auth()->user()->unit == 1014) {
             $gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$request->kodekunjungan]);
             return view('erm.gambarmata', [
@@ -638,7 +640,7 @@ class ErmController extends Controller
                 'kodekunjungan' => $request->kodekunjungan,
             ]);
         } else if (auth()->user()->unit == 1012) {
-            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+            $gbr = DB::select('select * from erm_tanda_gambar_kandungan where kodekunjungan = ? ', [$request->kodekunjungan]);
             return view('erm.gambarkandungan', [
                 'gbr' => $gbr,
                 'kodekunjungan' => $request->kodekunjungan,
@@ -655,8 +657,10 @@ class ErmController extends Controller
                 'gbr' => $gbr,
                 'kodekunjungan' => $request->kodekunjungan,
             ]);
-        }else{
+        } else {
             echo "<h5 class='mt-3 text-danger'>Tidak ada form pemeriksaan khusus ...</h5>";
+        }}else{
+            echo "<h5 class='mt-3 text-danger'>Form assesmen awal medis belum diisi ...</h5>";
         }
     }
     public function terapitindakan(Request $request)
@@ -1068,9 +1072,18 @@ class ErmController extends Controller
         $rm = $datakunjungan[0]->no_rm;
         $datapasien = DB::select('select nama_px,no_rm,tempat_lahir,date(tgl_lahir) as tgl_lahir,jenis_kelamin,fc_umur(no_rm) as umur, fc_alamat4(no_rm) as alamat  from mt_pasien where no_rm = ?', [$rm]);
         //ambil gambar berdasarkan unit login
-        $gambar = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ?', [$request->kodekunjungan]);
-
-
+        if (auth()->user()->unit == '1019') {
+            $gambar = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ?', [$request->kodekunjungan]);
+        } else if (auth()->user()->unit == '1014') {
+            $gambar = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ?', [$request->kodekunjungan]);
+            // gambarmata::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+        } else if (auth()->user()->unit == '1024') {
+            $gambar = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ?', [$request->kodekunjungan]);
+            // gambarparu::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+        } else if (auth()->user()->unit == '1007') {
+            $gambar = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ?', [$request->kodekunjungan]);
+            // gambargigi::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
+        }      
         if (auth()->user()->hak_akses == 2) {
             return view('erm.resume_perawat', [
                 'now' => carbon::now()->timezone('Asia/jakarta'),
@@ -1298,7 +1311,7 @@ class ErmController extends Controller
                 gambartht::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
             } else if (auth()->user()->unit == '1014') {
                 gambarmata::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
-            } else if (auth()->user()->unit == '1014') {
+            } else if (auth()->user()->unit == '1024') {
                 gambarparu::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
             } else if (auth()->user()->unit == '1007') {
                 gambargigi::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
@@ -1477,6 +1490,167 @@ class ErmController extends Controller
             return view('erm.garmbarcppt', [
                 'gbr' => $gambar
             ]);
+        }
+    }
+    public function simpanformmata(Request $request)
+    {
+        $kodekunjungan = $request->kodekunjungan;
+        $cek = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ?', [$kodekunjungan]);
+        $jlh = count($cek);
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $isi = [
+            'kodekunjungan' => $kodekunjungan,
+            'od_visus_dasar' => $dataSet['od_visus_dasar'],
+            'od_pinhole_visus_dasar' => $dataSet['od_pinhole_visus_dasar'],
+            'os_visus_dasar' => $dataSet['os_visus_dasar'],
+            'os_pinhole_visus_dasar' => $dataSet['os_pinhole_visus_dasar'],
+            'od_sph_refraktometer' => $dataSet['od_sph_refraktometer'],
+            'od_cyl_refraktometer' => $dataSet['od_cyl_refraktometer'],
+            'od_x_refraktometer' => $dataSet['od_x_refraktometer'],
+            'os_sph_refraktometer' => $dataSet['os_sph_refraktometer'],
+            'os_cyl_refraktometer' => $dataSet['os_cyl_refraktometer'],
+            'os_x_refraktometer' => $dataSet['os_x_refraktometer'],
+            'od_sph_Lensometer' => $dataSet['od_sph_Lensometer'],
+            'od_cyl_Lensometer' => $dataSet['od_cyl_Lensometer'],
+            'od_x_Lensometer' => $dataSet['od_x_Lensometer'],
+            'os_sph_Lensometer' => $dataSet['os_sph_Lensometer'],
+            'os_cyl_Lensometer' => $dataSet['os_cyl_Lensometer'],
+            'os_x_Lensometer' => $dataSet['os_x_Lensometer'],
+            'vod_sph_kpj' => $dataSet['vod_sph_kpj'],
+            'vod_cyl_kpj' => $dataSet['vod_cyl_kpj'],
+            'vod_x_kpj' => $dataSet['vod_x_kpj'],
+            'vos_sph_kpj' => $dataSet['vos_sph_kpj'],
+            'vos_cyl_kpj' => $dataSet['vos_cyl_kpj'],
+            'vos_x_kpj' => $dataSet['vos_x_kpj'],
+            'penglihatan_dekat' => $dataSet['penglihatan_dekat'],
+            'tekanan_intra_okular' => $dataSet['tekanan_intra_okular'],
+            'catatan_pemeriksaan_lainnya' => $dataSet['catatan_pemeriksaan_lainnya'],
+            'palpebra' => $dataSet['palpebra'],
+            'konjungtiva' => $dataSet['konjungtiva'],
+            'kornea' => $dataSet['kornea'],
+            'bilik_mata_depan' => $dataSet['bilik_mata_depan'],
+            'pupil' => $dataSet['pupil'],
+            'iris' => $dataSet['iris'],
+            'lensa' => $dataSet['lensa'],
+            'funduskopi' => $dataSet['funduskopi'],
+            'oftamologis' => $dataSet['oftamologis'],
+            'masalahmedis' => $dataSet['masalahmedis'],
+            'prognosis' => $dataSet['prognosis'],
+        ];
+        try {
+            if ($jlh > 0) {
+                gambarmata::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($isi);
+            } else {
+                $gambarmata = gambarmata::create($isi);
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'Form pemeriksaan khusus berhasil disimpan ...'
+            ];
+            echo json_encode($data);
+            die;
+        } catch (\Exception $e) {
+            $data = [
+                'kode' => 500,
+                'message' => $e->getMessage()
+            ];
+            echo json_encode($data);
+            die;
+        }
+    }
+    public function simpanformparu(Request $request)
+    {
+        $kodekunjungan = $request->kodekunjungan;
+        $cek = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ?', [$kodekunjungan]);
+        $jlh = count($cek);
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $isi = [
+            'kodekunjungan' => $kodekunjungan,
+            'Inspeksi' => $dataSet['Inspeksi'],
+            'keteranganinspeksi' => $dataSet['keteranganinspeksi'],
+            'selaiga' => $dataSet['selaiga'],
+            'vocalfremitus' => $dataSet['vocalfremitus'],
+            'sonar' => $dataSet['sonar'],
+            'hipersonar' => $dataSet['hipersonar'],
+            'vesikuler' => $dataSet['vesikuler'],
+            'ronchi' => $dataSet['ronchi'],
+            'wheezing' => $dataSet['wheezing'],
+            'tgl_entry' => carbon::now()->timezone('Asia/jakarta') 
+        ];
+        try {
+            if ($jlh > 0) {
+                gambarparu::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($isi);
+            } else {
+                $gambarparu = gambarparu::create($isi);
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'Form pemeriksaan khusus berhasil disimpan ...'
+            ];
+            echo json_encode($data);
+            die;
+        } catch (\Exception $e) {
+            $data = [
+                'kode' => 500,
+                'message' => $e->getMessage()
+            ];
+            echo json_encode($data);
+            die;
+        }
+    }
+    public function simpanformobgyn(Request $request)
+    {
+        $kodekunjungan = $request->kodekunjungan;
+        $cek = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ?', [$kodekunjungan]);
+        $jlh = count($cek);
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index =  $nama['name'];
+            $value =  $nama['value'];
+            $dataSet[$index] = $value;
+        }
+        $isi = [
+            'kodekunjungan' => $kodekunjungan,
+            'Inspeksi' => $dataSet['Inspeksi'],
+            'keteranganinspeksi' => $dataSet['keteranganinspeksi'],
+            'selaiga' => $dataSet['selaiga'],
+            'vocalfremitus' => $dataSet['vocalfremitus'],
+            'sonar' => $dataSet['sonar'],
+            'hipersonar' => $dataSet['hipersonar'],
+            'vesikuler' => $dataSet['vesikuler'],
+            'ronchi' => $dataSet['ronchi'],
+            'wheezing' => $dataSet['wheezing'],
+            'tgl_entry' => carbon::now()->timezone('Asia/jakarta') 
+        ];
+        try {
+            if ($jlh > 0) {
+                gambarparu::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($isi);
+            } else {
+                $gambarparu = gambarparu::create($isi);
+            }
+            $data = [
+                'kode' => 200,
+                'message' => 'Form pemeriksaan khusus berhasil disimpan ...'
+            ];
+            echo json_encode($data);
+            die;
+        } catch (\Exception $e) {
+            $data = [
+                'kode' => 500,
+                'message' => $e->getMessage()
+            ];
+            echo json_encode($data);
+            die;
         }
     }
 }
