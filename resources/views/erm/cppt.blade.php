@@ -145,6 +145,7 @@
                             <th colspan="4" class="bg-info">Instruksi Tenaga Kesehatan Termasuk Pasca Bedah / Prosedur</th>
                         </thead>
                         <tbody>
+                            @if($c->signature_DOKTER != '')
                             <tr>
                                 <td class="text-bold">Keluhan Utama</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->keluhan_utama}}</td>
@@ -195,6 +196,10 @@
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->diagnosakerja }}</td>
                             </tr>
                             <tr>
+                                <td class="text-bold">Diagnosa Pembanding</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->diagnosapembanding }}</td>
+                            </tr>
+                            <tr>
                                 <td class="text-bold">Tindak Lanjut</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->tindaklanjut }}</td>
                             </tr>
@@ -217,12 +222,15 @@
                                     <img src="{{ $c->signature_DOKTER }}" alt="">
                                 </td>
                             </tr>
+                            @else
+                            <h5 class="text-danger mb-4">Dokter belum mengisi assesmen awal medis ...</h5>
+                            @endif
                             <tr>
                                 <td>
                                     <div class="btn-group" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-info">Penunjang</button>
-                                        <button type="button" class="btn btn-warning">Tindakan</button>
-                                        <button type="button" class="btn btn-danger">Farmasi</button>
+                                        <button type="button" data-toggle="modal" data-target="#modalhasilpenunjang" class="btn btn-info tombolhasilpenunjang" kodeunit="{{ $c->kode_unit }}" kodekunjungan="{{ $c->kode_kunjungan }}">Penunjang</button>
+                                        <button type="button" data-toggle="modal" data-target="#modalriwayattindakan" class="btn btn-warning tombolriwayattindakan" kodeunit="{{ $c->kode_unit }}" kodekunjungan="{{ $c->kode_kunjungan }}">Tindakan</button>
+                                        <button type="button" data-toggle="modal" data-target="#modalorderfarmasi" class="btn btn-danger tombolriwayatfarmasi" kodeunit="{{ $c->kode_unit }}" kodekunjungan="{{ $c->kode_kunjungan }}">Farmasi</button>
                                         <button type="button" class="btn btn-success text-center tombolgambar" data-toggle="modal" kode="{{ $c->kode_kunjungan }}" data-target="#modalgambar" kodeunit="{{ $c->kode_unit }}" kodekunjungan="{{ $c->kode_kunjungan }}">Penandaan Gambar </button>
                                     </div>
                                 </td>
@@ -305,12 +313,69 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Hasil Penandaan Gambar</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Hasil Pemeriksaan Khusus</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body gambarcppt">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalhasilpenunjang" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Hasil Penunjang</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body hasilpenunjang">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalriwayattindakan" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Riwayat Tindakan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body riwayattindakan">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalorderfarmasi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Riwayat Order Farmasi</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body riwayatfarmasi">
                 
             </div>
             <div class="modal-footer">
@@ -349,4 +414,88 @@
             }
         });
     })
+    $('.tombolhasilpenunjang').click(function() {
+        spinner = $('#loader2');
+        spinner.show();
+        kode = $(this).attr('kodekunjungan')
+        kodeunit = $(this).attr('kodeunit')
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode,
+                kodeunit
+            },
+            url: '<?= route('hasilpenunjang') ?>',
+            error: function(data) {
+                spinner.hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                spinner.hide();
+                $('.hasilpenunjang').html(response)
+            }
+        });
+    })
+    $('.tombolriwayattindakan').click(function() {
+        spinner = $('#loader2');
+        spinner.show();
+        kode = $(this).attr('kodekunjungan')
+        kodeunit = $(this).attr('kodeunit')
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode,
+                kodeunit
+            },
+            url: '<?= route('riwayattindakan') ?>',
+            error: function(data) {
+                spinner.hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                spinner.hide();
+                $('.riwayattindakan').html(response)
+            }
+        });
+    })
+    $('.tombolriwayatfarmasi').click(function() {
+        spinner = $('#loader2');
+        spinner.show();
+        kode = $(this).attr('kodekunjungan')
+        kodeunit = $(this).attr('kodeunit')
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kode,
+                kodeunit
+            },
+            url: '<?= route('riwayatfarmasi') ?>',
+            error: function(data) {
+                spinner.hide();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                spinner.hide();
+                $('.riwayatfarmasi').html(response)
+            }
+        });
+    })    
 </script>

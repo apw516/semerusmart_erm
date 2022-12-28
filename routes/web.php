@@ -25,6 +25,9 @@ Route::post('orderhariini', [ErmController::class, 'orderhariini'])->middleware(
 Route::post('resumemedis', [ErmController::class, 'resumemedis'])->middleware('auth')->name('resumemedis');
 Route::post('cekresume', [ErmController::class, 'cekresume'])->middleware('auth')->name('cekresume');
 Route::post('ambilgambar_cppt', [ErmController::class, 'ambilgambar_cppt'])->middleware('auth')->name('ambilgambar_cppt');
+Route::post('hasilpenunjang', [ErmController::class, 'hasilpenunjang'])->middleware('auth')->name('hasilpenunjang');
+Route::post('riwayattindakan', [ErmController::class, 'riwayattindakan'])->middleware('auth')->name('riwayattindakan');
+Route::post('riwayatfarmasi', [ErmController::class, 'riwayatfarmasi'])->middleware('auth')->name('riwayatfarmasi');
 
 //perawat
 Route::group(['middleware' => ['hak_akses:2','auth']], function () {
@@ -63,6 +66,8 @@ Route::group(['middleware' => ['hak_akses:3','auth']], function () {
     Route::post('/simpanformmata', [ErmController::class, 'simpanformmata'])->name('simpanformmata');
     Route::post('/simpanformparu', [ErmController::class, 'simpanformparu'])->name('simpanformparu');
     Route::post('/simpanformobgyn', [ErmController::class, 'simpanformobgyn'])->name('simpanformobgyn');
+    Route::post('/cariobat', [ErmController::class, 'cariobat'])->name('cariobat');
+    Route::post('/simpanorderfarmasi', [ErmController::class, 'simpanorderfarmasi'])->name('simpanorderfarmasi');
 });
 
 

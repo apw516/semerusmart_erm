@@ -294,6 +294,16 @@
                 </table>
                 <table class="table table-sm table-bordered">
                     <thead>
+                        <th class="text-bold bg-info">Diagnosa Pembanding</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ $assmed[0]->diagnosakerja }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-sm table-bordered">
+                    <thead>
                         <th class="text-bold bg-info">Tindak Lanjut</th>
                     </thead>
                     <tbody>

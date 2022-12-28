@@ -50,6 +50,7 @@
                     <input hidden type="text" id="rmdaripasien" value="{{ $pasien[0]->no_rm }}">
                         <p class="text-xs">
                             {{ $datakunjungan[0]->nama_penjamin }}
+                            <input hidden type="text" id="kodepenjamin" value="{{ $datakunjungan[0]->kode_penjamin }}">
                         </p>
                     </a>
 

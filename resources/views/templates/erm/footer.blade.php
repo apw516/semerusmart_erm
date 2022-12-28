@@ -138,7 +138,9 @@
             type: 'post',
             data: {
                 _token: "{{ csrf_token() }}",
-                kodekunjungan: $('#kodekunjungan').val()
+                kodekunjungan: $('#kodekunjungan').val(),
+                kodepenjamin: $('#kodepenjamin').val(),
+                no_rm: $('#rmdaripasien').val()
             },
             url: '<?= route('riwayatpengobatan') ?>',
             error: function(data) {

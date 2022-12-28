@@ -597,6 +597,7 @@ class ErmController extends Controller
             ,tanggalassesmen
             ,namadokter
             ,iddokter
+            ,diagnosapembanding
             ,B.signature AS signature_DOKTER
             ,B.status
             ,B.tanggalassesmen as assdok
@@ -621,7 +622,74 @@ class ErmController extends Controller
     }
     public function riwayatpengobatan(Request $request)
     {
-        echo 'ok';
+        return view('erm.orderobat', [
+            'kode_penjamin' => $request->kodepenjamin,
+            'riwayat' => DB::select('SELECT a.`counter`
+            ,a.`tgl_entry`
+            ,a.`unit_pengirim` AS pengirim
+            ,a.`dokter_pengirim` AS dokter_pengirim 
+            ,fc_nama_barang(b.`kode_barang`) AS nama_obat
+            ,b.`jumlah_layanan` AS jumlah
+            ,b.`aturan_pakai`
+            ,b.`tipe_anestesi`
+            ,c.`satuan`
+            ,c.`satuan_besar`
+            FROM ts_order_farmasi_header a 
+            LEFT OUTER JOIN ts_order_farmasi_detail b ON a.id = b.`row_id_header`
+            LEFT OUTER JOIN mt_barang c ON b.`kode_barang` = c.`kode_barang`
+            WHERE no_cm = ? ORDER BY a.`counter` DESC',[$request->no_rm])
+        ]);
+    }
+    public function cariobat(Request $request)
+    {
+        if($request->penjamin == 1){
+            $depo = '4008'; //bpjs
+        }else if($request->penjamin == 2){
+            $depo = '4002'; //BPJS
+        }
+        $stokobat = DB::select('CALL sp_cari_obat_stok_all_erm(?,?)',[$request->nama,$depo]);
+        return view('erm.tabelobat', [
+            'STOK' => $stokobat
+        ]);
+    }
+    public function simpanorderfarmasi(Request $request)
+    {
+        
+        $request->no_rm;
+        $request->jenisresep;
+        $dataheader = [
+            'tgl_entry' => 'tanggal',
+            'kode_kunjungan' => $request->kodekunjungan,
+            'kode_unit' => 'test',
+            'kode_tipe_transaksi' => '2',
+            'pic' => 'user',
+            'unit_pengirim' => 'unit_kirm',
+            'status_order' => '1',
+            'no_cm' => $request->no_rm
+        ];
+        //simpan order header farmasi
+        $data = json_decode($_POST['data'], true);
+        foreach ($data as $nama) {
+            $index = $nama['name'];
+            $value = $nama['value'];
+            $dataSet[$index] = $value;
+            if ($index == 'jumlah') {
+                $arrayindex[] = $dataSet;
+            }
+        }
+        //simpan order farmasi detail
+        foreach($arrayindex as $ai){
+            $datadetail = [
+                'kode_barang' => $ai['kodelayanan'],
+            ];
+        }
+            // dd($arrayindex);
+        $data = [
+            'kode' => 200,
+            'message' => $datadetail
+        ];
+        echo json_encode($data);
+        die;
     }
     public function penandaangambar(Request $request)
     {
@@ -1083,7 +1151,9 @@ class ErmController extends Controller
         } else if (auth()->user()->unit == '1007') {
             $gambar = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ?', [$request->kodekunjungan]);
             // gambargigi::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
-        }      
+        } else {
+            $gambar = 0;
+        }     
         if (auth()->user()->hak_akses == 2) {
             return view('erm.resume_perawat', [
                 'now' => carbon::now()->timezone('Asia/jakarta'),
@@ -1491,6 +1561,20 @@ class ErmController extends Controller
                 'gbr' => $gambar
             ]);
         }
+        if ($request->kodeunit == '1014') {
+            $gambar = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ?', [$request->kode]);
+            return view('erm.garmbarcppt_mata', [
+                'gbr' => $gambar
+            ]);
+        }if ($request->kodeunit == '1024') {
+            $gambar = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ?', [$request->kode]);
+            return view('erm.garmbarcppt_paru', [
+                'gbr' => $gambar
+            ]);
+        }
+        else{
+            echo 'Cooming Soon ...';
+        }
     }
     public function simpanformmata(Request $request)
     {
@@ -1652,5 +1736,25 @@ class ErmController extends Controller
             echo json_encode($data);
             die;
         }
+    }
+    public function riwayatfarmasi(Request $request)
+    {
+        echo 'Data Not Found';
+    }
+    public function riwayattindakan(Request $request)
+    {
+        $riwayat_tindakan = DB::connection('mysql2')->select("SELECT a.kode_kunjungan,b.id AS id_header,C.id AS id_detail,c.jumlah_layanan,b.kode_layanan_header,c.`kode_tarif_detail`,e.`NAMA_TARIF` FROM simrs_waled.ts_kunjungan a 
+        RIGHT OUTER JOIN ts_layanan_header b ON a.kode_kunjungan = b.kode_kunjungan
+        RIGHT OUTER JOIN ts_layanan_detail c ON b.id = c.row_id_header
+        RIGHT OUTER JOIN mt_tarif_detail d ON c.kode_tarif_detail = d.`KODE_TARIF_DETAIL`
+        RIGHT OUTER JOIN mt_tarif_header e ON d.`KODE_TARIF_HEADER` = e.`KODE_TARIF_HEADER`
+        WHERE a.`kode_kunjungan` = ?", [$request->kode]);
+        return view('erm.riwayattindakancppt', [
+            'tindakan' => $riwayat_tindakan
+        ]);
+    }
+    public function hasilpenunjang(Request $request)
+    {
+        echo 'Data Not Found';
     }
 }
