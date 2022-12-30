@@ -1,9 +1,14 @@
 <div class="container mt-4">
-    <div class="btn-group mr-2 mt-4" role="group" aria-label="First group">
-        <button type="button" class="btn btn-danger">Riwayat Obat</button>
-        <button type="button" class="btn btn-warning">Riwayat Resep</button>
+    <div class="btn-group mr-2 mt-2 mb-3" role="group" aria-label="First group">
+        <button type="button" class="btn btn-warning lihatriwayat_resep" id="lihatriwayat_resep" data-toggle="modal" data-target="#riwayatresep">Riwayat Resep</button>
     </div>
+    <div class="row">
+        <div class="col-md-12 mt-2">
+            <div class="tabelorder_today">
 
+            </div>
+        </div>
+    </div>
     <div class="row">
         <!-- <div class="col-md-6 mt-4">
             <h5 class="text-bold mb-3">
@@ -63,14 +68,16 @@
             </div>
         </div>
         <div class="col-md-7">
-            <div class="card-header text-bold"><h2>ORDER OBAT FARMASI</h2></div>
+            <div class="card-header text-bold">
+                <h2>ORDER OBAT FARMASI</h2>
+            </div>
             <div class="card-body">
                 <div class="form-group">
                     <label for="exampleFormControlSelect1">Jenis Resep</label>
                     <select class="form-control" id="jenisresep">
-                        <option value="1">Reguler</option>
-                        <option value="2">Kronis</option>
-                        <option value="3">Kemotherapi</option>
+                        <option value="80">Reguler</option>
+                        <option value="81">Kronis</option>
+                        <option value="82">Kemotherapi</option>
                     </select>
                 </div>
                 <form action="" method="post" class="formorderobat">
@@ -84,7 +91,76 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="riwayatresep" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Riwayat Resep</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="vriwayatresep2">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
+    $(document).ready(function() {
+        kodekunjungan = $('#kodekunjunganpasien').val()
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kodekunjungan,
+            },
+            url: '<?= route('cariorderobat') ?>',
+            error: function(response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ooops....',
+                    text: 'Sepertinya ada masalah......',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                $('.tabelorder_today').html(response)
+            }
+        });
+    });
+
+    function reload_riwayat() {
+        kodekunjungan = $('#kodekunjunganpasien').val()
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                kodekunjungan,
+            },
+            url: '<?= route('cariorderobat') ?>',
+            error: function(response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ooops....',
+                    text: 'Sepertinya ada masalah......',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                $('.tabelorder_today').html(response)
+            }
+        });
+    }
     $(function() {
         $("#riwayatobat").DataTable({
             "responsive": false,
@@ -161,8 +237,31 @@
                         text: data.message,
                         footer: ''
                     })
+                    reload_riwayat()
                 }
             }
         });
     });
+    $(".lihatriwayat_resep").click(function() {
+        no_rm = $('#rmdaripasien').val()
+        $.ajax({
+            type: 'post',
+            data: {
+                _token: "{{ csrf_token() }}",
+                no_rm
+            },
+            url: '<?= route('lihatriwayatresep') ?>',
+            error: function(response) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Sepertinya ada masalah ...',
+                    footer: ''
+                })
+            },
+            success: function(response) {
+                $('.vriwayatresep2').html(response)
+            }
+        });
+    })
 </script>

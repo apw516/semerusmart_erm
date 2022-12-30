@@ -68,6 +68,8 @@ Route::group(['middleware' => ['hak_akses:3','auth']], function () {
     Route::post('/simpanformobgyn', [ErmController::class, 'simpanformobgyn'])->name('simpanformobgyn');
     Route::post('/cariobat', [ErmController::class, 'cariobat'])->name('cariobat');
     Route::post('/simpanorderfarmasi', [ErmController::class, 'simpanorderfarmasi'])->name('simpanorderfarmasi');
+    Route::post('/cariorderobat', [ErmController::class, 'cariorderobat'])->name('cariorderobat');
+    Route::post('/lihatriwayatresep', [ErmController::class, 'lihatriwayatresep'])->name('lihatriwayatresep');
 });
 
 

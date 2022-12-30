@@ -16,6 +16,8 @@ use App\Models\gambartht;
 use App\Models\gambarmata;
 use App\Models\gambarparu;
 use App\Models\gambargigi;
+use App\Models\erm_header_order_farmasi;
+use App\Models\erm_detail_order_farmasi;
 use App\Models\assemenawalmedis;
 
 class ErmController extends Controller
@@ -657,39 +659,72 @@ class ErmController extends Controller
         
         $request->no_rm;
         $request->jenisresep;
-        $dataheader = [
-            'tgl_entry' => 'tanggal',
-            'kode_kunjungan' => $request->kodekunjungan,
-            'kode_unit' => 'test',
-            'kode_tipe_transaksi' => '2',
-            'pic' => 'user',
-            'unit_pengirim' => 'unit_kirm',
-            'status_order' => '1',
-            'no_cm' => $request->no_rm
-        ];
-        //simpan order header farmasi
+        // 1 reguler
+        // 2 kronis
+        // 3 kemo
+        $dt = Carbon::now()->timezone('Asia/Jakarta');
+        $date = $dt->toDateString();
+        $time = $dt->toTimeString();
+        $now = $date . ' ' . $time;
+
         $data = json_decode($_POST['data'], true);
         foreach ($data as $nama) {
             $index = $nama['name'];
             $value = $nama['value'];
             $dataSet[$index] = $value;
-            if ($index == 'jumlah') {
+            if ($index == 'signa') {
                 $arrayindex[] = $dataSet;
             }
         }
+        $dataheader = [
+            'kodekunjungan' => $request->kodekunjungan,
+            'tgl_entry' => $now,
+            'kode_unit' => $arrayindex[0]['depo'],
+            'kode_tipe_transaksi' => '2',
+            'pic' => auth()->user()->kode_dpjp,
+            'unit_pengirim' => auth()->user()->unit,
+            'status_order' => '1',
+            'no_cm' => $request->no_rm,
+            'jenisresep' => $request->jenisresep,
+        ];
+        $idheader = erm_header_order_farmasi::create($dataheader);
+        //simpan order header farmasi
         //simpan order farmasi detail
         foreach($arrayindex as $ai){
             $datadetail = [
-                'kode_barang' => $ai['kodelayanan'],
+                'kodebarang' => $ai['kodelayanan'],
+                'id_header' => $idheader['id'],
+                'jumlah' => $ai['jumlah'],
+                'signa' => $ai['signa'],
+                'unit' => $ai['depo'],
             ];
+            $idheader = erm_detail_order_farmasi::create($datadetail);
         }
             // dd($arrayindex);
         $data = [
             'kode' => 200,
-            'message' => $datadetail
+            'message' => 'a'
         ];
         echo json_encode($data);
         die;
+    }
+    public function cariorderobat(Request $request){
+        $request->kodekunjungan;
+        return view('erm.orderfarmasi_today', [
+            'riwayatorder' => DB::select('SELECT a.id AS id_header,b.`id` AS id_detail
+            ,a.`tgl_entry`,b.`unit` AS unit 
+            ,a.`pic`
+            ,a.`status_order`
+            ,a.`jenisresep`
+            ,b.jumlah
+            ,b.signa
+            ,fc_nama_barang(b.`kodebarang`) nama_barang
+            ,b.`kodebarang` FROM erm_order_farmasi_header a
+            LEFT OUTER JOIN erm_order_farmasi_detail b ON a.`id` = b.`id_header` WHERE a.`kodekunjungan` = ?',[$request->kodekunjungan])
+        ]);
+    }
+    public function lihatriwayatresep(Request $request){
+        
     }
     public function penandaangambar(Request $request)
     {

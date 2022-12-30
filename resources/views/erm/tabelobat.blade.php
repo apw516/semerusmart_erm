@@ -8,7 +8,7 @@
     </thead>
     <tbody>
         @foreach($STOK as $s )
-        <tr class="pilihobat" kodebarang="{{ $s->kode_barang }}" namabarang="{{ $s->nama_barang }}">
+        <tr class="pilihobat" depo="{{ $s->kode_unit }}" kodebarang="{{ $s->kode_barang }}" namabarang="{{ $s->nama_barang }}">
             <td>{{ $s->nama_barang }}</td>
             <td>{{ $s->stok_current }}</td>
             <td>{{ $s->dosis }}</td>
@@ -46,6 +46,7 @@
         var wrapper = $(".input_fields_wrap2"); //Fields wrapper
         var x = 1; //initlal text box count
         kode = $(this).attr('kodebarang')
+        depo = $(this).attr('depo')
         namabarang = $(this).attr('namabarang')
         // e.preventDefault();
         if (x < max_fields) { //max input box allowed
@@ -55,6 +56,8 @@
                 namabarang +
                 '"><input hidden readonly type="" class="form-control form-control-sm" id="" name="kodelayanan" value="' +
                 kode +
+                '"><input hidden readonly type="" class="form-control form-control-sm" id="" name="depo" value="' +
+                depo +
                 '"></div><div class="form-group col-md-1"><label for="inputPassword4">Jumlah</label><input type="" class="form-control form-control-sm" id="" name="jumlah" value="0"></div><div class="form-group col-md-4"><label for="inputPassword4">Signa</label><input type="" class="form-control form-control-sm col-md-3" id="signa" name="signa" value=""></div><i class="bi bi-x-square remove_field form-group col-md-1 text-danger"></i></div>'
             );
             $(wrapper).on("click", ".remove_field", function(e) { //user click on remove 
