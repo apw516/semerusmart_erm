@@ -17,6 +17,8 @@
             <td> 
             @if($p->kj == NULL)    
             <span class="right badge badge-danger">Perawat Belum mengisi pemeriksaan</span>
+            @elseif($p->erm_medis == 0)    
+            <span class="right badge badge-warning">Dokter Belum mengisi pemeriksaan</span>
             @else
             <span class="right badge badge-success">Sudah diisi</span>
             @endif
@@ -26,7 +28,7 @@
             <td>{{ $p->nama }}</td>
             <td>{{ $p->umur }} tahun</td>
             <td class="text-xxs">{{ $p->alamat }}</td>
-            <td class="text-xxs">@if($p->data_erm == 0)<button class="badge badge-danger">tidak ada berkas erm</button> @endif</td>
+            <td class="text-xxs">{{ $p->diagx}} @if($p->data_erm == 0)<button class="badge badge-danger">tidak ada berkas erm</button> @endif</td>
             <td hidden>{{ $p->unit }}</td>
             <td>{{ $p->asalunit }}</td>
         </tr>

@@ -1,3 +1,19 @@
+<link rel="stylesheet" href="{{ asset('public/plugins/select2/css/select2.min.css') }}">
+<link rel="stylesheet" href="{{ asset('public/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+<script src="{{ asset('public/plugins/select2/js/select2.full.min.js') }}"></script>
+<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+
+    //Initialize Select2 Elements
+    $('.select2bs4').select2({
+      theme: 'bootstrap4'
+    })
+
+  })
+  
+</script>
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-3 mt-4">
@@ -118,15 +134,15 @@
                             </tr>
                             <tr>
                                 <td>Riwayat Kehamilan (bagi pasien wanita) </td>
-                                <td colspan="3"><textarea name="riwayatkehamilan" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
+                                <td colspan="3"><textarea name="riwayatkehamilan" cols="10" rows="4" class="form-control"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Riwayat Kelahiran (bagi pasien anak) </td>
-                                <td colspan="3"><textarea name="riwayatkelahiran" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
+                                <td colspan="3"><textarea name="riwayatkelahiran" cols="10" rows="4" class="form-control"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Riwayat Penyakit Sekarang</td>
-                                <td colspan="3"><textarea name="riwayatpenyakitsekarang" cols="10" rows="4" class="form-control">Tidak Ada</textarea></td>
+                                <td colspan="3"><textarea name="riwayatpenyakitsekarang" cols="10" rows="4" class="form-control"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Riwayat Penyakit Dahulu</td>
@@ -187,7 +203,7 @@
                                             </div>
                                         </div>
                                         <textarea name="ketriwayatlain" id="ketriwayatlain" class="form-control" placeholder="keterangan lain - lain"></textarea>
-                                </td>                               
+                                </td>
                             </tr>
                             <tr>
                                 <td>Riwayat Alergi</td>
@@ -231,14 +247,15 @@
                             <tr>
                                 <td>Diagnosa Kerja</td>
                                 <td colspan="3">
-                                    <textarea class="form-control" name="diagnosakerja"></textarea>
+                                    <textarea class="form-control" name="diagnosakerja">{{ $datakunjungan[0]->diagx }}</textarea>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Diagnosa Pembanding</td>
-                                <td colspan="3">
-                                    <textarea class="form-control" name="diagnosapembanding"></textarea>
+                                <td>Diagnosa banding</td>
+                                <td colspan="2">
+                                    <textarea class="form-control" id="diagnosapembanding" name="diagnosapembanding"></textarea>
                                 </td>
+                                <td><button type="button" class="btn btn-info showmodalicd" data-toggle="modal" data-target="#modalicd">ICD 10</button></td>
                             </tr>
                             <tr>
                                 <td>Rencana Kerja</td>
@@ -289,7 +306,7 @@
         </div>
         @else
         <div class="error-content">
-          <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Assesmen awal keperawatan belum diisi ...</h3>
+            <h3><i class="fas fa-exclamation-triangle text-warning"></i> Oops! Assesmen awal keperawatan belum diisi ...</h3>
         </div>
         @endif
     </div>
@@ -309,6 +326,39 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Modal -->
+     <div class="modal fade" id="modalicd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Kode ICD 10</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="tableicd" class="table table-sm table-bordered table-hover">
+                        <thead>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                        </thead>
+                        <tbody>
+                            @foreach($icd as $i)
+                            <tr class="pilihdiagnosa" diagnosa="{{ $i->nama }} ( {{ $i->diag }} )">
+                                <td>{{$i->diag}}</td>
+                                <td>{{$i->nama}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
@@ -348,6 +398,7 @@
                 rm = $('#nomorrm_px').val()
                 idasskep = $('#idasskep').val()
                 kodekunjungan = $('#kodekunjungan').val()
+                diagnosabanding = $('#diagnosapembanding').val()
                 $.ajax({
                     async: true,
                     type: 'post',
@@ -357,7 +408,8 @@
                         data: JSON.stringify(data),
                         rm,
                         idasskep,
-                        kodekunjungan
+                        kodekunjungan,
+                        diagnosabanding
                     },
                     url: '<?= route('simpanpemeriksaandokter') ?>',
                     error: function(data) {
@@ -393,4 +445,20 @@
                 });
             });
         });
+        $(function() {
+            $("#tableicd").DataTable({
+                "responsive": false,
+                "lengthChange": false,
+                "searching": true,
+                "pageLength": 8,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            });
+        });
+        $('#tableicd').on('click', '.pilihdiagnosa', function() {
+            diag = $(this).attr('diagnosa')
+            val1 = $("textarea#diagnosapembanding").val();
+            $('#modal').modal('hide');
+            $("textarea#diagnosapembanding").val(diag + ', ' + val1);
+        })
     </script>

@@ -52,6 +52,7 @@
                             {{ $datakunjungan[0]->nama_penjamin }}
                             <input hidden type="text" id="kodepenjamin" value="{{ $datakunjungan[0]->kode_penjamin }}">
                             <input hidden type="text" id="kodekunjunganpasien" value="{{ $datakunjungan[0]->kode_kunjungan }}">
+                            <input  hidden type="text" id="diagnosapasiennya" value="{{ $datakunjungan[0]->diagx }}">
                         </p>
                     </a>
 

@@ -26,7 +26,7 @@
             <td>{{ $p->nama }}</td>
             <td>{{ $p->umur }} tahun</td>
             <td class="text-xxs">{{ $p->alamat }}</td>
-            <td class="text-xxs">@if($p->data_erm == 0)<button class="badge badge-danger">tidak ada berkas erm</button> @endif</td>
+            <td class="text-xxs">{{ $p->diagx}} @if($p->data_erm == 0)<button class="badge badge-danger">tidak ada berkas erm</button> @endif</td>
             <td hidden>{{ $p->unit }}</td>
             <td>{{ $p->asalunit }}</td>
         </tr>

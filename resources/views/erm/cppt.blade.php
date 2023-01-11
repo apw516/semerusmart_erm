@@ -151,8 +151,24 @@
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->keluhan_utama}}</td>
                             </tr>
                             <tr>
-                                <td class="text-bold">Riwayat Penyakit</td>
+                                <td class="text-bold">Riwayat Penyakit Sekarang</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->riwayat_penyakit }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Riwayat Kehamilan Bagi Pasien Wanita</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->riwayat_kehamilan }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Riwayat Kelahiran Bagi Pasien Anak</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->riwayat_kelahiran }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Riwayat Alergi</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->alergi }} | {{ $c->ket_alergi }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-bold">Status Generalis</td>
+                                <td colspan="4" style="font-style:italic" class="text-md">{{ $c->status_generalis }}</td>
                             </tr>
                             <tr class="bg-info">
                                 <td class="text-bold">Hipertensi</td>
@@ -196,7 +212,7 @@
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->diagnosakerja }}</td>
                             </tr>
                             <tr>
-                                <td class="text-bold">Diagnosa Pembanding</td>
+                                <td class="text-bold">Diagnosa Banding</td>
                                 <td colspan="4" style="font-style:italic" class="text-md">{{ $c->diagnosapembanding }}</td>
                             </tr>
                             <tr>

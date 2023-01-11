@@ -247,10 +247,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Diagnosa Pembanding</td>
-                                <td colspan="3">
-                                    <textarea class="form-control" name="diagnosapembanding">{{ $hasil[0]->diagnosapembanding }}</textarea>
+                                <td>Diagnosa banding</td>
+                                <td colspan="2">
+                                    <textarea class="form-control" id="diagnosapembanding" name="diagnosapembanding">{{ $hasil[0]->diagnosapembanding }}</textarea>
                                 </td>
+                                <td><button type="button" class="btn btn-info showmodalicd" data-toggle="modal" data-target="#modalicd">ICD 10</button></td>
                             </tr>
                             <tr>
                                 <td>Rencana Kerja</td>
@@ -319,6 +320,40 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="modalicd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Kode ICD 10</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="tableicd" class="table table-sm table-bordered table-hover">
+                        <thead>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                        </thead>
+                        <tbody>
+                            @foreach($icd as $i)
+                            <tr class="pilihdiagnosa" diagnosa="{{ $i->nama }} ( {{ $i->diag }} )">
+                                <td>{{$i->diag}}</td>
+                                <td>{{$i->nama}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         $(".detailass_kep_today").click(function() {
             spinner = $('#loader2');
@@ -400,4 +435,20 @@
             });
 
         });
+        $(function() {
+            $("#tableicd").DataTable({
+                "responsive": false,
+                "lengthChange": false,
+                "searching": true,
+                "pageLength": 8,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            });
+        });
+        $('#tableicd').on('click', '.pilihdiagnosa', function() {
+            diag = $(this).attr('diagnosa')
+            val1 = $("textarea#diagnosapembanding").val();
+            $('#modal').modal('hide');
+            $("textarea#diagnosapembanding").val(diag + ', ' + val1);
+        })
     </script>

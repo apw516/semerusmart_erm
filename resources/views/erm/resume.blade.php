@@ -233,7 +233,37 @@
                             <td colspan="8" class="text-bold bg-info">Riwaat Penyakit Lain</td>
                         </tr>
                         <tr>
-                            <td colspan="8">{{ $assmed[0]->riwayatlain }}</td>
+                            <td colspan="8">@if($assmed[0]->riwayatlain == 1) {{ $assmed[0]->ket_riwayat_lain }} @else Tidak Ada @endif</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-bold bg-info">Riwaat Penyakit Sekarang</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">{{ $assmed[0]->riwayat_penyakit }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-bold bg-info">Riwayat Kehamilan Bagi Pasien Wanita</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">{{ $assmed[0]->riwayat_kehamilan }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-bold bg-info">Riwayat Kelahiran Bagi Pasien Anak</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">{{ $assmed[0]->riwayat_kelahiran }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-bold bg-info">Riwayat Alergi</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">{{ $assmed[0]->alergi }} | Keterangan : {{ $assmed[0]->ket_alergi }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-bold bg-info">Status Generalis</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8">{{ $assmed[0]->status_generalis }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -281,6 +311,31 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <th colspan="5" class="text-bold bg-secondary">Order Farmasi</th>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-warning">
+                                    <td>Nama Obat</td>
+                                    <td>Jenis Resep</td>
+                                    <td>Status Order</td>
+                                    <td>Signa</td>
+                                    <td>Jumlah</td>
+                                </tr>
+                                @if(count($farmasi) > 0)
+                                @foreach($farmasi as $a)
+                                <tr>
+                                    <td>{{ $a->nama_barang }}</td>
+                                    <td>{{ $a->jenisresep }}</td>
+                                    <td>{{ $a->status_order }}</td>
+                                    <td>{{ $a->signa }}</td>
+                                    <td>{{ $a->jumlah }}</td>
+                                </tr>
+                                @endforeach
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
                     <div class="col-md-6">
                         <table class="table table-sm table-bordered">
@@ -295,11 +350,11 @@
                         </table>
                         <table class="table table-sm table-bordered">
                             <thead>
-                                <th class="text-bold bg-secondary">Diagnosa Pembanding</th>
+                                <th class="text-bold bg-secondary">Diagnosa Banding</th>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ $assmed[0]->diagnosakerja }}</td>
+                                    <td>{{ $assmed[0]->diagnosapembanding }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -512,6 +567,12 @@
                         <td style="font-style:italic">{{ $gambar[0]->prognosis}}</td>
                     </tr>
                 </table>
+                @elseif(auth()->user()->unit == '1007')
+                <div class="row">
+                    <div class="col-md-12">
+                        <img src="{{ $gambar[0]->gigi }}" alt="">
+                    </div>
+                </div>
                 @endif
                 @endif
                 </table>

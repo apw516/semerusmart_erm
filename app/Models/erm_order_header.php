@@ -10,6 +10,7 @@ class erm_order_header extends Model
     use HasFactory;
     const UPDATED_AT = null;
     const CREATED_AT = null;
-    protected $table = 'ts_layanan_header_order';
+    protected $connection = 'mysql3';
+    protected $table = 'ts_layanan_header';
     protected $guarded = ['id'];
 }

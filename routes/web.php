@@ -28,6 +28,7 @@ Route::post('ambilgambar_cppt', [ErmController::class, 'ambilgambar_cppt'])->mid
 Route::post('hasilpenunjang', [ErmController::class, 'hasilpenunjang'])->middleware('auth')->name('hasilpenunjang');
 Route::post('riwayattindakan', [ErmController::class, 'riwayattindakan'])->middleware('auth')->name('riwayattindakan');
 Route::post('riwayatfarmasi', [ErmController::class, 'riwayatfarmasi'])->middleware('auth')->name('riwayatfarmasi');
+Route::post('carikodeicd', [ErmController::class, 'carikodeicd'])->middleware('auth')->name('carikodeicd');
 
 //perawat
 Route::group(['middleware' => ['hak_akses:2','auth']], function () {

@@ -13,42 +13,26 @@
 <script>
     $(".tindakanpulang").click(function() {
         kodekunjungan = $('#kodekunjungan').val()
-        $.ajax({
-            async: true,
-            dataType: 'Json',
-            type: 'post',
-            data: {
-                _token: "{{ csrf_token() }}",
-                kodekunjungan
-            },
-            url: '<?= route('pasienpulang') ?>',
-            error: function(data) {
-                spinner.hide();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Sepertinya ada masalah ...',
-                    footer: ''
-                })
-            },
-            success: function(data) {
-                spinner.hide();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'OK',
-                    text: data.message,
-                    footer: ''
-                })
-                var element = document.getElementById("tindaklanjut");
-                myFunction(element)
-                element.classList.add("active");
+        Swal.fire({
+            title: 'Pasien akan dipulangkan, Buat Surat Kontrol berikutnya ?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            denyButtonText: `Tidak`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                Swal.fire('Saved!', '', 'success')
+            } else if (result.isDenied) {
                 $.ajax({
+                    async: true,
+                    dataType: 'Json',
                     type: 'post',
                     data: {
                         _token: "{{ csrf_token() }}",
-                        kodekunjungan: $('#kodekunjungan').val()
+                        kodekunjungan
                     },
-                    url: '<?= route('tindaklanjut') ?>',
+                    url: '<?= route('pasienpulang') ?>',
                     error: function(data) {
                         spinner.hide();
                         Swal.fire({
@@ -58,13 +42,42 @@
                             footer: ''
                         })
                     },
-                    success: function(response) {
+                    success: function(data) {
                         spinner.hide();
-                        $('#content').html(response)
-                        cek_resume()
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'OK',
+                            text: data.message,
+                            footer: ''
+                        })
+                        var element = document.getElementById("tindaklanjut");
+                        myFunction(element)
+                        element.classList.add("active");
+                        $.ajax({
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                kodekunjungan: $('#kodekunjungan').val()
+                            },
+                            url: '<?= route('tindaklanjut') ?>',
+                            error: function(data) {
+                                spinner.hide();
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: 'Sepertinya ada masalah ...',
+                                    footer: ''
+                                })
+                            },
+                            success: function(response) {
+                                spinner.hide();
+                                $('#content').html(response)
+                                cek_resume()
+                            }
+                        });
                     }
                 });
             }
-        });
+        })
     });
 </script>

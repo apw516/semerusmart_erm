@@ -42,7 +42,7 @@ class ErmController extends Controller
         if ($tipe == 2) {
             //perawat
             $unit = auth()->user()->unit;
-            $pasien_poli = DB::select('select a.kode_kunjungan,fc_nama_px(a.no_rm) as nama,a.no_rm,fc_umur(a.no_rm) as umur, fc_alamat4(a.no_rm) as alamat , fc_nama_unit1(a.kode_unit) as unit,a.tgl_masuk, a.kelas, a.counter, b.kode_kunjungan as kj
+            $pasien_poli = DB::select('select a.kode_kunjungan,fc_nama_px(a.no_rm) as nama,a.no_rm,fc_umur(a.no_rm) as umur, fc_alamat4(a.no_rm) as alamat , fc_nama_unit1(a.kode_unit) as unit,a.tgl_masuk, a.kelas, a.counter,a.diagx, b.kode_kunjungan as kj
             ,fc_nama_unit1(a.ref_unit) as asalunit,(SELECT COUNT(id) FROM erm_hasil_assesmen_keperawatan_rajal WHERE no_rm = a.no_rm ) AS data_erm from ts_kunjungan a left outer join erm_hasil_assesmen_keperawatan_rajal b on b.kode_kunjungan = a.kode_kunjungan where a.kode_unit = ? and a.status_kunjungan = ? and date(a.tgl_masuk) = ?', [$unit, 1, $date]);
             return view('perawat.datapasien', [
                 'pasien' => $pasien_poli
@@ -50,8 +50,9 @@ class ErmController extends Controller
         } else {
             //dokter
             $unit = auth()->user()->unit;
-            $pasien_poli = DB::select('select a.kode_kunjungan,fc_nama_px(a.no_rm) as nama,a.no_rm,fc_umur(a.no_rm) as umur, fc_alamat4(a.no_rm) as alamat , fc_nama_unit1(a.kode_unit) as unit,a.tgl_masuk, a.kelas, a.counter, b.kode_kunjungan as kj
-            ,fc_nama_unit1(a.ref_unit) as asalunit,(SELECT COUNT(id) FROM erm_hasil_assesmen_keperawatan_rajal WHERE no_rm = a.no_rm ) AS data_erm from ts_kunjungan a left outer join erm_hasil_assesmen_keperawatan_rajal b on b.kode_kunjungan = a.kode_kunjungan where a.kode_unit = ? and a.status_kunjungan = ? and date(a.tgl_masuk) = ?', [$unit, 1, $date]);
+            $pasien_poli = DB::select('select a.kode_kunjungan,fc_nama_px(a.no_rm) as nama,a.no_rm,fc_umur(a.no_rm) as umur, fc_alamat4(a.no_rm) as alamat , fc_nama_unit1(a.kode_unit) as unit,a.tgl_masuk, a.kelas, a.counter,a.diagx, b.kode_kunjungan as kj
+            ,fc_nama_unit1(a.ref_unit) as asalunit,(SELECT COUNT(id) FROM erm_hasil_assesmen_keperawatan_rajal WHERE no_rm = a.no_rm ) AS data_erm
+            ,(SELECT COUNT(id) FROM erm_hasil_assesmen_dokter_rajal WHERE kode_kunjungan = a.kode_kunjungan ) AS erm_medis from ts_kunjungan a left outer join erm_hasil_assesmen_keperawatan_rajal b on b.kode_kunjungan = a.kode_kunjungan where a.kode_unit = ? and a.status_kunjungan = ? and date(a.tgl_masuk) = ?', [$unit, 1, $date]);
             return view('dokter.datapasien', [
                 'pasien' => $pasien_poli
             ]);
@@ -171,6 +172,7 @@ class ErmController extends Controller
                 'asskep' => DB::select('select * from erm_hasil_assesmen_keperawatan_rajal where kode_kunjungan = ?', [$request->kodekunjungan]),
                 'now' => carbon::now()->timezone('Asia/jakarta'),
                 'datakunjungan' => $datakunjungan,
+                'icd' => DB::select('select * from mt_icd10'),
                 'hasil' => $cek_hasil_periksa,
                 'last_counter' => DB::select('SELECT *,fc_nama_penjamin2(kode_penjamin) AS nama_penjamin,fc_nama_unit1(kode_unit) AS nama_unit,fc_NAMA_PARAMEDIS1(kode_paramedis) AS dokter FROM ts_kunjungan WHERE no_rm = ? AND counter = ? ORDER BY counter DESC LIMIT 1
             ', [$rm, $counter])
@@ -179,6 +181,7 @@ class ErmController extends Controller
             return view('dokter.formdokter', [
                 'pasien' => $datapasien,
                 'asskep' => DB::select('select * from erm_hasil_assesmen_keperawatan_rajal where kode_kunjungan = ?', [$request->kodekunjungan]),
+                'icd' => DB::select('select * from mt_icd10'),
                 'now' => carbon::now()->timezone('Asia/jakarta'),
                 'datakunjungan' => $datakunjungan,
                 'last_counter' => DB::select('SELECT *,fc_nama_penjamin2(kode_penjamin) AS nama_penjamin,fc_nama_unit1(kode_unit) AS nama_unit,fc_NAMA_PARAMEDIS1(kode_paramedis) AS dokter FROM ts_kunjungan WHERE no_rm = ? AND counter = ? ORDER BY counter DESC LIMIT 1', [$rm, $counter])
@@ -602,6 +605,11 @@ class ErmController extends Controller
             ,diagnosapembanding
             ,B.signature AS signature_DOKTER
             ,B.status
+            ,B.riwayat_kehamilan
+            ,B.riwayat_kelahiran
+            ,B.alergi
+            ,B.ket_alergi
+            ,B.status_generalis
             ,B.tanggalassesmen as assdok
             ,gambar            
              ,fc_nama_unit1(a.kode_unit) AS namaunit 
@@ -620,7 +628,7 @@ class ErmController extends Controller
     public function Hasilpemeriksaanpenunjang(Request $request)
     {
         $rm = $request->nomorrm;
-        echo 'Penunjang ' . $rm;
+        return view('erm.testing');
     }
     public function riwayatpengobatan(Request $request)
     {
@@ -639,24 +647,24 @@ class ErmController extends Controller
             FROM ts_order_farmasi_header a 
             LEFT OUTER JOIN ts_order_farmasi_detail b ON a.id = b.`row_id_header`
             LEFT OUTER JOIN mt_barang c ON b.`kode_barang` = c.`kode_barang`
-            WHERE no_cm = ? ORDER BY a.`counter` DESC',[$request->no_rm])
+            WHERE no_cm = ? ORDER BY a.`counter` DESC', [$request->no_rm])
         ]);
     }
     public function cariobat(Request $request)
     {
-        if($request->penjamin == 1){
+        if ($request->penjamin == 1) {
             $depo = '4008'; //bpjs
-        }else if($request->penjamin == 2){
+        } else if ($request->penjamin == 2) {
             $depo = '4002'; //BPJS
         }
-        $stokobat = DB::select('CALL sp_cari_obat_stok_all_erm(?,?)',[$request->nama,$depo]);
+        $stokobat = DB::select('CALL sp_cari_obat_stok_all_erm(?,?)', [$request->nama, $depo]);
         return view('erm.tabelobat', [
             'STOK' => $stokobat
         ]);
     }
     public function simpanorderfarmasi(Request $request)
     {
-        
+
         $request->no_rm;
         $request->jenisresep;
         // 1 reguler
@@ -690,7 +698,7 @@ class ErmController extends Controller
         $idheader = erm_header_order_farmasi::create($dataheader);
         //simpan order header farmasi
         //simpan order farmasi detail
-        foreach($arrayindex as $ai){
+        foreach ($arrayindex as $ai) {
             $datadetail = [
                 'kodebarang' => $ai['kodelayanan'],
                 'id_header' => $idheader['id'],
@@ -698,9 +706,9 @@ class ErmController extends Controller
                 'signa' => $ai['signa'],
                 'unit' => $ai['depo'],
             ];
-            $idheader = erm_detail_order_farmasi::create($datadetail);
+            erm_detail_order_farmasi::create($datadetail);
         }
-            // dd($arrayindex);
+        // dd($arrayindex);
         $data = [
             'kode' => 200,
             'message' => 'a'
@@ -708,7 +716,8 @@ class ErmController extends Controller
         echo json_encode($data);
         die;
     }
-    public function cariorderobat(Request $request){
+    public function cariorderobat(Request $request)
+    {
         $request->kodekunjungan;
         return view('erm.orderfarmasi_today', [
             'riwayatorder' => DB::select('SELECT a.id AS id_header,b.`id` AS id_detail
@@ -720,49 +729,50 @@ class ErmController extends Controller
             ,b.signa
             ,fc_nama_barang(b.`kodebarang`) nama_barang
             ,b.`kodebarang` FROM erm_order_farmasi_header a
-            LEFT OUTER JOIN erm_order_farmasi_detail b ON a.`id` = b.`id_header` WHERE a.`kodekunjungan` = ?',[$request->kodekunjungan])
+            LEFT OUTER JOIN erm_order_farmasi_detail b ON a.`id` = b.`id_header` WHERE a.`kodekunjungan` = ?', [$request->kodekunjungan])
         ]);
     }
-    public function lihatriwayatresep(Request $request){
-        
+    public function lihatriwayatresep(Request $request)
+    {
     }
     public function penandaangambar(Request $request)
     {
-        $cek_awal_medis = DB::select('select * from erm_hasil_assesmen_dokter_rajal where kode_kunjungan = ?',[$request->kodekunjungan]);
-        if(count($cek_awal_medis) > 0){
-        if (auth()->user()->unit == 1014) {
-            $gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$request->kodekunjungan]);
-            return view('erm.gambarmata', [
-                'gbr' => $gbr,
-                'kodekunjungan' => $request->kodekunjungan,
-            ]);
-        } else if (auth()->user()->unit == 1019) {
-            $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
-            return view('erm.gambartht', [
-                'gbr' => $gbr,
-                'kodekunjungan' => $request->kodekunjungan,
-            ]);
-        } else if (auth()->user()->unit == 1012) {
-            $gbr = DB::select('select * from erm_tanda_gambar_kandungan where kodekunjungan = ? ', [$request->kodekunjungan]);
-            return view('erm.gambarkandungan', [
-                'gbr' => $gbr,
-                'kodekunjungan' => $request->kodekunjungan,
-            ]);
-        } else if (auth()->user()->unit == 1024) {
-            $gbr = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ? ', [$request->kodekunjungan]);
-            return view('erm.gambarparu', [
-                'gbr' => $gbr,
-                'kodekunjungan' => $request->kodekunjungan,
-            ]);
-        } else if (auth()->user()->unit == 1007) {
-            $gbr = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ? ', [$request->kodekunjungan]);
-            return view('erm.gambargigi', [
-                'gbr' => $gbr,
-                'kodekunjungan' => $request->kodekunjungan,
-            ]);
+        $cek_awal_medis = DB::select('select * from erm_hasil_assesmen_dokter_rajal where kode_kunjungan = ?', [$request->kodekunjungan]);
+        if (count($cek_awal_medis) > 0) {
+            if (auth()->user()->unit == 1014) {
+                $gbr = DB::select('select * from erm_tanda_gambar_mata where kodekunjungan = ? ', [$request->kodekunjungan]);
+                return view('erm.gambarmata', [
+                    'gbr' => $gbr,
+                    'kodekunjungan' => $request->kodekunjungan,
+                ]);
+            } else if (auth()->user()->unit == 1019) {
+                $gbr = DB::select('select * from erm_tanda_gambar_tht where kodekunjungan = ? ', [$request->kodekunjungan]);
+                return view('erm.gambartht', [
+                    'gbr' => $gbr,
+                    'kodekunjungan' => $request->kodekunjungan,
+                ]);
+            } else if (auth()->user()->unit == 1012) {
+                $gbr = DB::select('select * from erm_tanda_gambar_kandungan where kodekunjungan = ? ', [$request->kodekunjungan]);
+                return view('erm.gambarkandungan', [
+                    'gbr' => $gbr,
+                    'kodekunjungan' => $request->kodekunjungan,
+                ]);
+            } else if (auth()->user()->unit == 1024) {
+                $gbr = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ? ', [$request->kodekunjungan]);
+                return view('erm.gambarparu', [
+                    'gbr' => $gbr,
+                    'kodekunjungan' => $request->kodekunjungan,
+                ]);
+            } else if (auth()->user()->unit == 1007) {
+                $gbr = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ? ', [$request->kodekunjungan]);
+                return view('erm.gambargigi', [
+                    'gbr' => $gbr,
+                    'kodekunjungan' => $request->kodekunjungan,
+                ]);
+            } else {
+                echo "<h5 class='mt-3 text-danger'>Tidak ada form pemeriksaan khusus ...</h5>";
+            }
         } else {
-            echo "<h5 class='mt-3 text-danger'>Tidak ada form pemeriksaan khusus ...</h5>";
-        }}else{
             echo "<h5 class='mt-3 text-danger'>Form assesmen awal medis belum diisi ...</h5>";
         }
     }
@@ -801,8 +811,8 @@ class ErmController extends Controller
     }
     public function orderhariini(Request $request)
     {
-        $riwayat_tindakan_tdy = DB::select("
-        SELECT a.id as id_header,b.id as id_detail,fc_nama_unit1(a.kode_unit) AS nama_unit_tujuan,d.`NAMA_TARIF`, b.jumlah_layanan FROM ts_layanan_header_order a LEFT OUTER JOIN ts_layanan_detail_order b ON a.`id` = b.`row_id_header` LEFT OUTER JOIN mt_tarif_detail c ON b.`kode_tarif_detail` = c.`KODE_TARIF_DETAIL` LEFT OUTER JOIN mt_tarif_header d ON c.`KODE_TARIF_HEADER` = d.`KODE_TARIF_HEADER` WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]);
+        $riwayat_tindakan_tdy = DB::connection('mysql3')->select("
+        SELECT a.id as id_header,b.id as id_detail,fc_nama_unit1(a.kode_unit) AS nama_unit_tujuan,d.`NAMA_TARIF`, b.jumlah_layanan FROM ts_layanan_header a LEFT OUTER JOIN ts_layanan_detail b ON a.`id` = b.`row_id_header` LEFT OUTER JOIN mt_tarif_detail c ON b.`kode_tarif_detail` = c.`KODE_TARIF_DETAIL` LEFT OUTER JOIN mt_tarif_header d ON c.`KODE_TARIF_HEADER` = d.`KODE_TARIF_HEADER` WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]);
         return view('erm.order_tdy', [
             'riwayat' => $riwayat_tindakan_tdy
         ]);
@@ -965,6 +975,7 @@ class ErmController extends Controller
     }
     public function simpanorder(Request $request)
     {
+        //insert langsung ke ts_layanan_header dan ts_layanan_detail
         $dt = Carbon::now()->timezone('Asia/Jakarta');
         $date = $dt->toDateString();
         $time = $dt->toTimeString();
@@ -992,18 +1003,19 @@ class ErmController extends Controller
             ];
             $header = mt_kode_header::create($save_header);
             if ($penjamin == 'P01') {
-                $status_layanan = '1';
+                $kode_tipe_transaksi = '1';
             } else {
-                $status_layanan = '2';
+                $kode_tipe_transaksi = '2';
             }
             $data_layanan_header = [
                 'kode_layanan_header' => $id_header,
                 'no_rm' => $request->no_rm,
                 'tgl_entry' => $now,
                 'kode_kunjungan' => $kodekunjungan,
-                'status_layanan' => $status_layanan,
+                'status_layanan' => 3,
+                'status_order' => 'order',
                 'kode_unit' => $request->kodepenunjang,
-                'kode_tipe_transaksi' => 2,
+                'kode_tipe_transaksi' => $kode_tipe_transaksi,
                 'kode_penjaminx' => $penjamin,
                 'dok_kirim' => auth()->user()->kode_dpjp,
                 'unit_pengirim' => auth()->user()->unit,
@@ -1011,7 +1023,23 @@ class ErmController extends Controller
                 'status_order' => 0
             ];
             $hed = erm_order_header::create($data_layanan_header);
+            $total_layanan_header = 0;
             foreach ($arrayindex as $arr) {
+                if($arr['tarif'] == '1'){
+                    $disc = 100;
+                }else{
+                    $disc = $arr['disc'];
+                }
+                $totallayanan = $arr['tarif'] * $arr['qty'];
+                $diskon = $disc / 100 * $totallayanan;
+                $totalakhir = $totallayanan - $diskon;
+                if($kode_tipe_transaksi == 1){
+                    $tagihan_pribadi = $totalakhir;
+                    $tagihan_penjamin = 0;
+                }else{
+                    $tagihan_pribadi = 0;
+                    $tagihan_penjamin = $totalakhir;
+                }
                 $id_detail = $this->createLayanandetail();
                 $save_detail = [
                     'id_layanan_detail' => $id_detail,
@@ -1019,19 +1047,30 @@ class ErmController extends Controller
                     'kode_tarif_detail' => $arr['kodelayanan'],
                     'total_tarif' => $arr['tarif'],
                     'jumlah_layanan' => $arr['qty'],
-                    'diskon_dokter' => $arr['disc'],
+                    'diskon_dokter' => $disc,
                     'cyto' => $arr['cyto'],
-                    'total_layanan' => $arr['tarif'] * $arr['qty'],
-                    'grantotal_layanan' => $arr['tarif'] * $arr['qty'],
-                    'status_layanan_detail' => 'OPN',
-                    'kode_dokter1' => $request->dokterpemeriksa,
+                    'total_layanan' =>$totallayanan,
+                    'grantotal_layanan' => $totalakhir,
+                    'status_layanan_detail' => 'CCL',
+                    'kode_dokter1' => auth()->user()->kode_dpjp,
                     'tgl_layanan_detail' => $now,
-                    'tagihan_penjamin' => $arr['tarif'] * $arr['qty'],
+                    'tagihan_penjamin' => $tagihan_penjamin,
+                    'tagihan_pribadi' => $tagihan_pribadi,
                     'tgl_layanan_detail_2' => $now,
                     'row_id_header' => $hed['id']
                 ];
                 erm_order_detail::create($save_detail);
+                $total_layanan_header2 = $totalakhir;
+                $total_layanan_header = $total_layanan_header2 + $total_layanan_header;
             }
+            if($kode_tipe_transaksi == 1){
+                $tagihan_pribadi_header = $total_layanan_header;
+                $tagihan_penjamin_header = 0;
+            }else{
+                $tagihan_pribadi_header = 0;
+                $tagihan_penjamin_header = $total_layanan_header;
+            }
+            erm_order_header::whereRaw('id = ?', array($hed->id))->update(['total_layanan' => $total_layanan_header,'tagihan_pribadi' => $tagihan_pribadi_header, 'tagihan_penjamin' => $tagihan_penjamin_header]);
             $data = [
                 'status' => 2,
                 'signature' => ''
@@ -1054,10 +1093,11 @@ class ErmController extends Controller
     }
     public function createOrderHeader($unit)
     {
-        $q = DB::select('SELECT id,kode_header,RIGHT(kode_header,6) AS kd_max  FROM mt_kode_order_header 
-        WHERE DATE(tgl_header) = CURDATE()
+        $date = date('Y-m-d');
+        $q = DB::connection('mysql3')->select('SELECT id,kode_header,RIGHT(kode_header,6) AS kd_max  FROM mt_kode_order_header 
+        WHERE DATE(tgl_header) = ?
         ORDER BY id DESC
-        LIMIT 1');
+        LIMIT 1',[$date]);
         $kd = "";
         if (count($q) > 0) {
             foreach ($q as $k) {
@@ -1072,7 +1112,7 @@ class ErmController extends Controller
     }
     public function createLayanandetail()
     {
-        $q = DB::select('SELECT id,id_layanan_detail,RIGHT(id_layanan_detail,6) AS kd_max  FROM ts_layanan_detail_order 
+        $q = DB::connection('mysql2')->select('SELECT id,id_layanan_detail,RIGHT(id_layanan_detail,6) AS kd_max  FROM ts_layanan_detail
         WHERE DATE(tgl_layanan_detail) = CURDATE()
         ORDER BY id DESC
         LIMIT 1');
@@ -1091,8 +1131,8 @@ class ErmController extends Controller
     public function batalorder(Request $request)
     {
         $id = $request->idheader;
-        DB::select('DELETE FROM ts_layanan_detail_order WHERE row_id_header = ?', [$request->idheader]);
-        DB::select('DELETE FROM ts_layanan_header_order WHERE id = ?', [$request->idheader]);
+        DB::connection('mysql3')->select('DELETE FROM ts_layanan_detail WHERE row_id_header = ?', [$request->idheader]);
+        DB::connection('mysql3')->select('DELETE FROM ts_layanan_header WHERE id = ?', [$request->idheader]);
         $data = [
             'status' => 2,
             'signature' => ''
@@ -1113,7 +1153,7 @@ class ErmController extends Controller
             'signature' => ''
         ];
         assesmenawal_dokter::whereRaw('kode_kunjungan = ?', array($request->kodekunjungan))->update($data);
-        DB::select('DELETE FROM ts_layanan_detail_order WHERE id = ?', [$request->iddetail]);
+        DB::connection('mysql3')->select('DELETE FROM ts_layanan_detail WHERE id = ?', [$request->iddetail]);
         $back = [
             'kode' => 200,
             'message' => 'order diretur !'
@@ -1187,8 +1227,17 @@ class ErmController extends Controller
             $gambar = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ?', [$request->kodekunjungan]);
             // gambargigi::whereRaw('kodekunjungan = ?', array($kodekunjungan))->update($data);
         } else {
-            $gambar = 0;
-        }     
+            $gambar = [];
+        }
+        $farmasi = DB::select('SELECT a.tgl_entry
+        ,a.jenisresep
+        ,a.`status_order`
+        ,fc_nama_barang(b.`kodebarang`) AS nama_barang
+        ,b.kodebarang
+        ,b.signa
+        ,b.`jumlah` FROM erm_order_farmasi_header a
+        INNER JOIN erm_order_farmasi_detail b ON  a.id = b.id_header
+        WHERE a.kodekunjungan = ?', [$request->kodekunjungan]);
         if (auth()->user()->hak_akses == 2) {
             return view('erm.resume_perawat', [
                 'now' => carbon::now()->timezone('Asia/jakarta'),
@@ -1203,7 +1252,8 @@ class ErmController extends Controller
             RIGHT OUTER JOIN mt_tarif_detail d ON c.kode_tarif_detail = d.`KODE_TARIF_DETAIL`
             RIGHT OUTER JOIN mt_tarif_header e ON d.`KODE_TARIF_HEADER` = e.`KODE_TARIF_HEADER`
             WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
-                'gambar' => $gambar
+                'gambar' => $gambar,
+                'farmasi' => $farmasi
             ]);
         } else {
             return view('erm.resume', [
@@ -1219,8 +1269,8 @@ class ErmController extends Controller
             RIGHT OUTER JOIN mt_tarif_detail d ON c.kode_tarif_detail = d.`KODE_TARIF_DETAIL`
             RIGHT OUTER JOIN mt_tarif_header e ON d.`KODE_TARIF_HEADER` = e.`KODE_TARIF_HEADER`
             WHERE a.`kode_kunjungan` = ?", [$request->kodekunjungan]),
-                'gambar' => $gambar
-
+                'gambar' => $gambar,
+                'farmasi' => $farmasi
             ]);
         }
     }
@@ -1601,13 +1651,19 @@ class ErmController extends Controller
             return view('erm.garmbarcppt_mata', [
                 'gbr' => $gambar
             ]);
-        }if ($request->kodeunit == '1024') {
+        }
+        if ($request->kodeunit == '1024') {
             $gambar = DB::select('select * from erm_tanda_gambar_paru where kodekunjungan = ?', [$request->kode]);
             return view('erm.garmbarcppt_paru', [
                 'gbr' => $gambar
             ]);
         }
-        else{
+        if ($request->kodeunit == '1007') {
+            $gambar = DB::select('select * from erm_tanda_gambar_gigi where kodekunjungan = ?', [$request->kode]);
+            return view('erm.garmbarcppt_gigi', [
+                'gbr' => $gambar
+            ]);
+        } else {
             echo 'Cooming Soon ...';
         }
     }
@@ -1704,7 +1760,7 @@ class ErmController extends Controller
             'vesikuler' => $dataSet['vesikuler'],
             'ronchi' => $dataSet['ronchi'],
             'wheezing' => $dataSet['wheezing'],
-            'tgl_entry' => carbon::now()->timezone('Asia/jakarta') 
+            'tgl_entry' => carbon::now()->timezone('Asia/jakarta')
         ];
         try {
             if ($jlh > 0) {
@@ -1749,7 +1805,7 @@ class ErmController extends Controller
             'vesikuler' => $dataSet['vesikuler'],
             'ronchi' => $dataSet['ronchi'],
             'wheezing' => $dataSet['wheezing'],
-            'tgl_entry' => carbon::now()->timezone('Asia/jakarta') 
+            'tgl_entry' => carbon::now()->timezone('Asia/jakarta')
         ];
         try {
             if ($jlh > 0) {
@@ -1774,7 +1830,17 @@ class ErmController extends Controller
     }
     public function riwayatfarmasi(Request $request)
     {
-        echo 'Data Not Found';
+        $kodekunjungan = $request->kode;
+        $farmasi = DB::select('SELECT a.tgl_entry
+        ,a.jenisresep
+        ,a.`status_order`
+        ,fc_nama_barang(b.`kodebarang`) AS nama_barang
+        ,b.kodebarang
+        ,b.signa
+        ,b.`jumlah` FROM erm_order_farmasi_header a
+        INNER JOIN erm_order_farmasi_detail b ON  a.id = b.id_header
+        WHERE a.kodekunjungan = ?', [$kodekunjungan]);
+        echo $farmasi[0]->nama_barang;
     }
     public function riwayattindakan(Request $request)
     {
@@ -1791,5 +1857,9 @@ class ErmController extends Controller
     public function hasilpenunjang(Request $request)
     {
         echo 'Data Not Found';
+    }
+    public function carikodeicd(Request $request)
+    {
+        
     }
 }

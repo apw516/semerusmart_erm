@@ -66,7 +66,7 @@
                                 <tr>
                                     <td>Keluhan Utama</td>
                                     <td>
-                                        <textarea class="form-control form-control-sm" name="keluhanutama" id="keluhanutama">Tidak Ada</textarea>
+                                        <textarea class="form-control form-control-sm" name="keluhanutama" id="keluhanutama"></textarea>
                                     </td>
                                 </tr>
                                 <tr>
@@ -137,7 +137,7 @@
                                                 lain</label>
                                         </div>
                                         <div>
-                                            <textarea type="text" name="keterangan_rp" id="keterangan_rp" class="form-control mt-2" placeholder="keterangan...">Tidak Ada</textarea>
+                                            <textarea type="text" name="keterangan_rp" id="keterangan_rp" class="form-control mt-2" placeholder="keterangan..."></textarea>
                                         </div>
                                     </td>
                                 </tr>
@@ -164,7 +164,7 @@
                                             <label class="form-check-label" for="inlineRadio1">Lain - lain</label>
                                         </div>
                                         <div>
-                                            <textarea type="text" name="keterangan_ab" id="keterangan_ab" class="form-control mt-2" placeholder="keterangan...">Tidak Ada</textarea>
+                                            <textarea type="text" name="keterangan_ab" id="keterangan_ab" class="form-control mt-2" placeholder="keterangan..."></textarea>
                                         </div>
                                     </td>
                                 </tr>
@@ -179,7 +179,7 @@
                                             <input class="form-check-input mr-3 cacattubuh" skor="2" type="radio" name="cacattubuh" id="cacattubuh" value="Ya">
                                             <label class="form-check-label" for="inlineRadio2">Ya</label>
                                         </div>
-                                        <input type="text" class="form-control form-control-sm mt-3" id="keterangancacattubuh" name="keterangancacattubuh" placeholder="Sebutkan cacat tubuh ..." value="Tidak Ada">
+                                        <input type="text" class="form-control form-control-sm mt-3" id="keterangancacattubuh" name="keterangancacattubuh" placeholder="Sebutkan cacat tubuh ..." value="">
                                     </td>
                                 </tr>
                                 <TR>
